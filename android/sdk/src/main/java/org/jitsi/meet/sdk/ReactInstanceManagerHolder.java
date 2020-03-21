@@ -33,6 +33,7 @@ import com.facebook.react.uimanager.ViewManager;
 import com.facebook.soloader.SoLoader;
 import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
+import com.oney.WebRTCModule.NewWebRTCModule;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 import org.webrtc.SoftwareVideoDecoderFactory;
@@ -92,7 +93,7 @@ class ReactInstanceManagerHolder {
         options.setVideoDecoderFactory(videoDecoderFactory);
         options.setVideoEncoderFactory(videoEncoderFactory);
 
-        nativeModules.add(new WebRTCModule(reactContext, options));
+        nativeModules.add(new NewWebRTCModule(reactContext, options));
 
         try {
             Class<?> amplitudeModuleClass = Class.forName("org.jitsi.meet.sdk.AmplitudeModule");

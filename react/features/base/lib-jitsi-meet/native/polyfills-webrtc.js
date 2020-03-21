@@ -8,6 +8,7 @@ import {
 } from 'react-native-webrtc';
 
 import RTCPeerConnection from './RTCPeerConnection';
+import getDisplayMedia from './getDisplayMedia';
 
 (global => {
     if (typeof global.MediaStream === 'undefined') {
@@ -30,6 +31,9 @@ import RTCPeerConnection from './RTCPeerConnection';
     }
 
     const navigator = global.navigator;
+    if (getDisplayMedia) {
+        mediaDevices.getDisplayMedia = getDisplayMedia.bind(mediaDevices);
+    }
 
     if (navigator) {
         if (typeof navigator.mediaDevices === 'undefined') {
