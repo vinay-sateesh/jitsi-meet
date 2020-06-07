@@ -13,6 +13,8 @@ const BUBBLE_RADIUS = 8;
  * need to extract the brand colors and sizes into a branding feature (planned
  * for the future).
  */
+
+import { OVERLAY_Z_INDEX } from "../../../../../react/features/base/react/constants";
 export default {
     /**
      * Wrapper View for the avatar.
@@ -24,10 +26,13 @@ export default {
 
     chatContainer: {
         alignItems: "stretch",
+        justifyContent: "flex-end",
         flex: 1,
         flexDirection: "column",
     },
-
+    Container: {
+        zIndex: OVERLAY_Z_INDEX + 1,
+    },
     chatLink: {
         color: ColorPalette.blue,
     },
@@ -132,7 +137,6 @@ ColorSchemeRegistry.register("Chat", {
     backdrop: {
         // backgroundColor: schemeColor('background'),
         backgroundColor: "transparent",
-        flex: 1,
     },
 
     /**

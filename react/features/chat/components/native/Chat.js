@@ -1,7 +1,13 @@
 // @flow
 
 import React from "react";
-import { KeyboardAvoidingView, SafeAreaView } from "react-native";
+import {
+    KeyboardAvoidingView,
+    SafeAreaView,
+    View,
+    TouchableWithoutFeedback,
+    Keyboard,
+} from "react-native";
 
 import { ColorSchemeRegistry } from "../../../base/color-scheme";
 import { translate } from "../../../base/i18n";
@@ -32,6 +38,34 @@ type Props = AbstractProps & {
  * the mobile client.
  */
 class Chat extends AbstractChat<Props> {
+    state = {
+        keyboardUp: false,
+    };
+    componentDidMount() {
+        this._keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === "android" ? "keyboardDidShow" : "keyboardWillShow",
+            this.keyboardDidShow.bind(this)
+        );
+        this._keyboardDidHideListener = Keyboard.addListener(
+            Platform.OS === "android" ? "keyboardDidHide" : "keyboardWillHide",
+            this.keyboardDidHide.bind(this)
+        );
+    }
+    componentWillUnmount() {
+        this._keyboardDidShowListener.remove();
+        this._keyboardDidHideListener.remove();
+    }
+    keyboardDidShow() {
+        this.setState({
+            keyboardUp: true,
+        });
+    }
+
+    keyboardDidHide() {
+        this.setState({
+            keyboardUp: false,
+        });
+    }
     /**
      * Instantiates a new instance.
      *
@@ -50,7 +84,7 @@ class Chat extends AbstractChat<Props> {
      */
     render() {
         const { _styles } = this.props;
-
+        const flexProp = this.state.keyboardUp ? { flex: 1 } : { flex: 0.5 };
         return (
             <SlidingView
                 onHide={this._onClose}
@@ -66,11 +100,22 @@ class Chat extends AbstractChat<Props> {
                         headerLabelKey="chat.title"
                         onPressBack={this._onClose}
                     />
-                    <SafeAreaView style={_styles.backdrop}>
-                        <MessageContainer messages={this.props._messages} />
-                        <MessageRecipient />
-                        <ChatInputBar onSend={this.props._onSendMessage} />
-                    </SafeAreaView>
+                    <TouchableWithoutFeedback
+                        onPress={Keyboard.dismiss}
+                        accessible={false}
+                    >
+                        <View
+                            style={{
+                                ..._styles.backdrop,
+
+                                ...flexProp,
+                            }}
+                        >
+                            <MessageContainer messages={this.props._messages} />
+                            <MessageRecipient />
+                            <ChatInputBar onSend={this.props._onSendMessage} />
+                        </View>
+                    </TouchableWithoutFeedback>
                 </KeyboardAvoidingView>
             </SlidingView>
         );

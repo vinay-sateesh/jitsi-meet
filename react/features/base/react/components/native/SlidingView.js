@@ -165,7 +165,7 @@ export default class SlidingView extends PureComponent<Props, State> {
         const isTransparent = this.props.transparent
             ? { backgroundColor: "transparent" }
             : "";
-        console.log(isTransparent);
+        // console.log(isTransparent);
         return (
             <View pointerEvents="box-none" style={styles.sliderViewContainer}>
                 <TouchableWithoutFeedback onPress={this._onHide}>

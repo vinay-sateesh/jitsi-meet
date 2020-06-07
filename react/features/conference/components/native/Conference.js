@@ -18,6 +18,7 @@ import {
     isCalendarEnabled,
 } from "../../../calendar-sync";
 import { Chat } from "../../../chat";
+
 import { DisplayNameLabel } from "../../../display-name";
 import { SharedDocument } from "../../../etherpad";
 import {
