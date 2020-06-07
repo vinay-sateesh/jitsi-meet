@@ -21,7 +21,7 @@ export default {
         flexDirection: "column",
         justifyContent: "flex-end",
         // minHeight: DEFAULT_GRADIENT_SIZE,
-        minHeight: 0,
+        minHeight: 80,
         left: 0,
         position: "absolute",
         right: 0,

@@ -11,8 +11,10 @@ const BUTTON_SIZE = 30;
  * The style of toolbar buttons.
  */
 const toolbarButton = {
-    backgroundColor: schemeColor("button"),
-    borderRadius: BUTTON_SIZE / 2,
+    // backgroundColor: schemeColor("button"),
+    backgroundColor: "transparent",
+
+    // borderRadius: BUTTON_SIZE / 2,
     borderWidth: 0,
     flex: 0,
     flexDirection: "row",
@@ -30,8 +32,8 @@ const toolbarButton = {
  */
 const toolbarButtonIcon = {
     alignSelf: "center",
-    color: ColorPalette.darkGrey,
-    fontSize: 22,
+    color: ColorPalette.white, //was darkGrey
+    fontSize: 28,
 };
 
 /**
@@ -39,7 +41,7 @@ const toolbarButtonIcon = {
  */
 const whiteToolbarButton = {
     ...toolbarButton,
-    backgroundColor: schemeColor("buttonToggled"),
+    // backgroundColor: schemeColor("buttonToggled"),
 };
 
 /**
@@ -124,7 +126,7 @@ ColorSchemeRegistry.register("Toolbox", {
         style: {
             ...whiteToolbarButton,
             borderColor: schemeColor("buttonToggledBorder"),
-            borderWidth: 1,
+            // borderWidth: 1,
         },
     },
 });
