@@ -6,7 +6,7 @@ import {
 
 import { FILMSTRIP_SIZE } from "../../../filmstrip";
 
-export const NAVBAR_GRADIENT_COLORS = ["#000000F0", "#00000000"];
+export const NAVBAR_GRADIENT_COLORS = ["#00000080", "#00000000"];
 
 // From brand guideline
 const BOTTOM_GRADIENT_HEIGHT = 0; //290

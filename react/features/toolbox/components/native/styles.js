@@ -3,7 +3,7 @@
 import { ColorSchemeRegistry, schemeColor } from "../../../base/color-scheme";
 import { BoxModel, ColorPalette } from "../../../base/styles";
 
-const BUTTON_SIZE = 30;
+const BUTTON_SIZE = 35;
 
 // Toolbox, toolbar:
 
@@ -14,7 +14,7 @@ const toolbarButton = {
     // backgroundColor: schemeColor("button"),
     backgroundColor: "transparent",
 
-    // borderRadius: BUTTON_SIZE / 2,
+    borderRadius: BUTTON_SIZE / 2,
     borderWidth: 0,
     flex: 0,
     flexDirection: "row",
@@ -89,6 +89,7 @@ ColorSchemeRegistry.register("Toolbox", {
     buttonStyles: {
         iconStyle: toolbarButtonIcon,
         style: toolbarButton,
+        underlayColor: "rgba(255, 255, 255, 0.2)",
     },
 
     buttonStylesBorderless: {
@@ -111,6 +112,7 @@ ColorSchemeRegistry.register("Toolbox", {
 
     hangupButtonStyles: {
         iconStyle: whiteToolbarButtonIcon,
+
         style: {
             ...toolbarButton,
             backgroundColor: schemeColor("hangup"),
@@ -123,6 +125,7 @@ ColorSchemeRegistry.register("Toolbox", {
      */
     toggledButtonStyles: {
         iconStyle: whiteToolbarButtonIcon,
+        underlayColor: "rgba(255, 255, 255, 0.2)",
         style: {
             ...whiteToolbarButton,
             borderColor: schemeColor("buttonToggledBorder"),
