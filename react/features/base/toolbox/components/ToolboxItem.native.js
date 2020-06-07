@@ -1,12 +1,12 @@
 // @flow
 
-import React from 'react';
-import { Text, TouchableHighlight, View } from 'react-native';
+import React from "react";
+import { Text, TouchableHighlight, View } from "react-native";
 
-import { Icon } from '../../icons';
+import { Icon } from "../../icons";
 
-import AbstractToolboxItem from './AbstractToolboxItem';
-import type { Props } from './AbstractToolboxItem';
+import AbstractToolboxItem from "./AbstractToolboxItem";
+import type { Props } from "./AbstractToolboxItem";
 
 /**
  * Native implementation of {@code AbstractToolboxItem}.
@@ -22,9 +22,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
         const { styles } = this.props;
 
         return (
-            <Icon
-                src = { this.props.icon }
-                style = { styles && styles.iconStyle } />
+            <Icon src={this.props.icon} style={styles && styles.iconStyle} />
         );
     }
 
@@ -41,7 +39,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             elementAfter,
             onClick,
             showLabel,
-            styles
+            styles,
         } = this.props;
 
         let children = this._renderIcon();
@@ -55,12 +53,12 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             // show both the icon and the label, then these two need to be
             // wrapped in a View.
             children = (
-                <View style = { style }>
-                    { children }
-                    <Text style = { styles && styles.labelStyle }>
-                        { this.label }
+                <View style={style}>
+                    {children}
+                    <Text style={styles && styles.labelStyle}>
+                        {this.label}
                     </Text>
-                    { elementAfter }
+                    {elementAfter}
                 </View>
             );
 
@@ -71,12 +69,13 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
 
         return (
             <TouchableHighlight
-                accessibilityLabel = { this.accessibilityLabel }
-                disabled = { disabled }
-                onPress = { onClick }
-                style = { style }
-                underlayColor = { styles && styles.underlayColor } >
-                { children }
+                accessibilityLabel={this.accessibilityLabel}
+                disabled={disabled}
+                onPress={onClick}
+                style={style}
+                underlayColor={styles && styles.underlayColor}
+            >
+                {children}
             </TouchableHighlight>
         );
     }

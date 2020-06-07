@@ -1,7 +1,7 @@
 // @flow
 
-import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
-import { BoxModel, ColorPalette } from '../../../base/styles';
+import { ColorSchemeRegistry, schemeColor } from "../../../base/color-scheme";
+import { BoxModel, ColorPalette } from "../../../base/styles";
 
 const BUBBLE_RADIUS = 8;
 
@@ -14,184 +14,184 @@ const BUBBLE_RADIUS = 8;
  * for the future).
  */
 export default {
-
     /**
      * Wrapper View for the avatar.
      */
     avatarWrapper: {
         marginRight: 8,
-        width: 32
+        width: 32,
     },
 
     chatContainer: {
-        alignItems: 'stretch',
+        alignItems: "stretch",
         flex: 1,
-        flexDirection: 'column'
+        flexDirection: "column",
     },
 
     chatLink: {
-        color: ColorPalette.blue
+        color: ColorPalette.blue,
     },
 
     /**
      * Wrapper for the details together, such as name, message and time.
      */
     detailsWrapper: {
-        alignItems: 'flex-start',
+        alignItems: "flex-start",
         flex: 1,
-        flexDirection: 'column'
+        flexDirection: "column",
     },
 
     /**
      * A special padding to avoid issues on some devices (such as Android devices with custom suggestions bar).
      */
     extraBarPadding: {
-        paddingBottom: 30
+        paddingBottom: 30,
     },
 
     inputBar: {
-        alignItems: 'center',
-        borderTopColor: 'rgb(209, 219, 231)',
+        alignItems: "center",
+        borderTopColor: "rgb(209, 219, 231)",
         borderTopWidth: 1,
-        flexDirection: 'row',
-        paddingHorizontal: BoxModel.padding
+        flexDirection: "row",
+        paddingHorizontal: BoxModel.padding,
     },
 
     inputField: {
-        color: 'rgb(28, 32, 37)',
+        color: "rgb(28, 32, 37)",
         flex: 1,
-        height: 48
+        height: 48,
     },
 
     messageBubble: {
-        alignItems: 'center',
+        alignItems: "center",
         borderRadius: BUBBLE_RADIUS,
-        flexDirection: 'row'
+        flexDirection: "row",
     },
 
     messageContainer: {
-        flex: 1
+        flex: 1,
     },
 
     /**
      * Wrapper View for the entire block.
      */
     messageWrapper: {
-        alignItems: 'flex-start',
+        alignItems: "flex-start",
         flex: 1,
-        flexDirection: 'row',
+        flexDirection: "row",
         marginHorizontal: 17,
-        marginVertical: 4
+        marginVertical: 4,
     },
 
     /**
      * Style modifier for the {@code detailsWrapper} for own messages.
      */
     ownMessageDetailsWrapper: {
-        alignItems: 'flex-end'
+        alignItems: "flex-end",
     },
 
     replyWrapper: {
-        alignItems: 'center',
-        flexDirection: 'row'
+        alignItems: "center",
+        flexDirection: "row",
     },
 
     sendButtonIcon: {
         color: ColorPalette.darkGrey,
-        fontSize: 22
+        fontSize: 22,
     },
 
     /**
      * Style modifier for system (error) messages.
      */
     systemMessageBubble: {
-        backgroundColor: 'rgb(247, 215, 215)'
+        backgroundColor: "rgb(247, 215, 215)",
     },
 
     /**
      * Wrapper for the name and the message text.
      */
     textWrapper: {
-        alignItems: 'flex-start',
-        flexDirection: 'column',
-        padding: 9
+        alignItems: "flex-start",
+        flexDirection: "column",
+        padding: 9,
     },
 
     /**
      * Text node for the timestamp.
      */
     timeText: {
-        color: 'rgb(164, 184, 209)',
-        fontSize: 13
-    }
+        color: "rgb(164, 184, 209)",
+        fontSize: 13,
+    },
 };
 
-ColorSchemeRegistry.register('Chat', {
+ColorSchemeRegistry.register("Chat", {
     /**
      * Background of the chat screen.
      */
     backdrop: {
-        backgroundColor: schemeColor('background'),
-        flex: 1
+        // backgroundColor: schemeColor('background'),
+        backgroundColor: "transparent",
+        flex: 1,
     },
 
     /**
      * The text node for the display name.
      */
     displayName: {
-        color: schemeColor('displayName'),
-        fontSize: 13
+        color: schemeColor("displayName"),
+        fontSize: 13,
     },
 
     localMessageBubble: {
-        backgroundColor: schemeColor('localMsgBackground'),
-        borderTopRightRadius: 0
+        backgroundColor: schemeColor("localMsgBackground"),
+        borderTopRightRadius: 0,
     },
 
     messageRecipientCancelIcon: {
-        color: schemeColor('icon'),
-        fontSize: 18
+        color: schemeColor("icon"),
+        fontSize: 18,
     },
 
     messageRecipientContainer: {
-        alignItems: 'center',
-        backgroundColor: schemeColor('privateMsgBackground'),
-        flexDirection: 'row',
-        padding: BoxModel.padding
+        alignItems: "center",
+        backgroundColor: schemeColor("privateMsgBackground"),
+        flexDirection: "row",
+        padding: BoxModel.padding,
     },
 
     messageRecipientText: {
-        color: schemeColor('text'),
-        flex: 1
+        color: schemeColor("text"),
+        flex: 1,
     },
 
     privateNotice: {
-        color: schemeColor('privateMsgNotice'),
+        color: schemeColor("privateMsgNotice"),
         fontSize: 11,
-        marginTop: 6
+        marginTop: 6,
     },
 
     privateMessageBubble: {
-        backgroundColor: schemeColor('privateMsgBackground')
+        backgroundColor: schemeColor("privateMsgBackground"),
     },
 
     remoteMessageBubble: {
-        backgroundColor: schemeColor('remoteMsgBackground'),
-        borderTopLeftRadius: 0
+        backgroundColor: schemeColor("remoteMsgBackground"),
+        borderTopLeftRadius: 0,
     },
 
     replyContainer: {
-        alignSelf: 'stretch',
-        borderLeftColor: schemeColor('replyBorder'),
+        alignSelf: "stretch",
+        borderLeftColor: schemeColor("replyBorder"),
         borderLeftWidth: 1,
-        justifyContent: 'center'
+        justifyContent: "center",
     },
 
     replyStyles: {
         iconStyle: {
-            color: schemeColor('replyIcon'),
+            color: schemeColor("replyIcon"),
             fontSize: 22,
-            padding: 8
-        }
-    }
+            padding: 8,
+        },
+    },
 });

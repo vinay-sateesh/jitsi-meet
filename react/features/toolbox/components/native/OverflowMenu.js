@@ -1,32 +1,35 @@
 // @flow
 
-import React, { Component } from 'react';
-import { Platform } from 'react-native';
+import React, { Component } from "react";
+import { Platform } from "react-native";
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
-import { CHAT_ENABLED, IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
-import { SharedDocumentButton } from '../../../etherpad';
-import { InfoDialogButton, InviteButton } from '../../../invite';
-import { AudioRouteButton } from '../../../mobile/audio-mode';
-import { LiveStreamButton, RecordButton } from '../../../recording';
-import { RoomLockButton } from '../../../room-lock';
-import { ClosedCaptionButton } from '../../../subtitles';
-import { TileViewButton } from '../../../video-layout';
+import { ColorSchemeRegistry } from "../../../base/color-scheme";
+import { BottomSheet, hideDialog, isDialogOpen } from "../../../base/dialog";
+import {
+    CHAT_ENABLED,
+    IOS_RECORDING_ENABLED,
+    getFeatureFlag,
+} from "../../../base/flags";
+import { connect } from "../../../base/redux";
+import { StyleType } from "../../../base/styles";
+import { SharedDocumentButton } from "../../../etherpad";
+import { InfoDialogButton, InviteButton } from "../../../invite";
+import { AudioRouteButton } from "../../../mobile/audio-mode";
+import { LiveStreamButton, RecordButton } from "../../../recording";
+import { RoomLockButton } from "../../../room-lock";
+import { ClosedCaptionButton } from "../../../subtitles";
+import { TileViewButton } from "../../../video-layout";
 
-import AudioOnlyButton from './AudioOnlyButton';
-import HelpButton from '../HelpButton';
-import RaiseHandButton from './RaiseHandButton';
-import ToggleCameraButton from './ToggleCameraButton';
-import DesktopSharingButton from './DesktopSharingButton';
+import AudioOnlyButton from "./AudioOnlyButton";
+import HelpButton from "../HelpButton";
+import RaiseHandButton from "./RaiseHandButton";
+import ToggleCameraButton from "./ToggleCameraButton";
+import DesktopSharingButton from "./DesktopSharingButton";
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
  */
 type Props = {
-
     /**
      * The color-schemed stylesheet of the dialog feature.
      */
@@ -50,7 +53,7 @@ type Props = {
     /**
      * Used for hiding the dialog when the selection was completed.
      */
-    dispatch: Function
+    dispatch: Function,
 };
 
 /**
@@ -89,34 +92,31 @@ class OverflowMenu extends Component<Props> {
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            styles: this.props._bottomSheetStyles
+            styles: this.props._bottomSheetStyles,
         };
 
         return (
-            <BottomSheet onCancel = { this._onCancel }>
-                <AudioRouteButton { ...buttonProps } />
-                <ToggleCameraButton { ...buttonProps } />
-                <AudioOnlyButton { ...buttonProps } />
-                <RoomLockButton { ...buttonProps } />
-                <ClosedCaptionButton { ...buttonProps } />
-                {
-                    this.props._recordingEnabled
-                        && <RecordButton { ...buttonProps } />
-                }
-                <LiveStreamButton { ...buttonProps } />
-                <TileViewButton { ...buttonProps } />
-                <InviteButton { ...buttonProps } />
-                {
-                    this.props._chatEnabled
-                        && <InfoDialogButton { ...buttonProps } />
-                }
-                <RaiseHandButton { ...buttonProps } />
-                <SharedDocumentButton { ...buttonProps } />
-                <HelpButton { ...buttonProps } />
-                {
-                    this.props._desktopSharingEnabled
-                        && <DesktopSharingButton  { ...buttonProps } />
-                }
+            <BottomSheet onCancel={this._onCancel}>
+                <AudioRouteButton {...buttonProps} />
+                <ToggleCameraButton {...buttonProps} />
+                <AudioOnlyButton {...buttonProps} />
+                <RoomLockButton {...buttonProps} />
+                <ClosedCaptionButton {...buttonProps} />
+                {this.props._recordingEnabled && (
+                    <RecordButton {...buttonProps} />
+                )}
+                <LiveStreamButton {...buttonProps} />
+                <TileViewButton {...buttonProps} />
+                <InviteButton {...buttonProps} />
+                {this.props._chatEnabled && (
+                    <InfoDialogButton {...buttonProps} />
+                )}
+                <RaiseHandButton {...buttonProps} />
+                <SharedDocumentButton {...buttonProps} />
+                <HelpButton {...buttonProps} />
+                {this.props._desktopSharingEnabled && (
+                    <DesktopSharingButton {...buttonProps} />
+                )}
             </BottomSheet>
         );
     }
@@ -148,22 +148,25 @@ class OverflowMenu extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    let { desktopSharingEnabled } = state['features/base/conference'];
-    if (state['features/base/config'].enableFeaturesBasedOnToken) {
+    let { desktopSharingEnabled } = state["features/base/conference"];
+    if (state["features/base/config"].enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
         // feature enabled
-        desktopSharingEnabled = getParticipants(state)
-            .find(({ features = {} }) =>
-                String(features['screen-sharing']) === 'true') !== undefined;
+        desktopSharingEnabled =
+            getParticipants(state).find(
+                ({ features = {} }) =>
+                    String(features["screen-sharing"]) === "true"
+            ) !== undefined;
     }
 
     return {
-        _bottomSheetStyles:
-            ColorSchemeRegistry.get(state, 'BottomSheet'),
+        _bottomSheetStyles: ColorSchemeRegistry.get(state, "BottomSheet"),
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _isOpen: isDialogOpen(state, OverflowMenu_),
-        _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED),
-        _desktopSharingEnabled: Boolean(desktopSharingEnabled)
+        _recordingEnabled:
+            Platform.OS !== "ios" ||
+            getFeatureFlag(state, IOS_RECORDING_ENABLED),
+        _desktopSharingEnabled: Boolean(desktopSharingEnabled),
     };
 }
 

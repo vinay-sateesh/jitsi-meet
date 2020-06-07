@@ -1,24 +1,23 @@
 // @flow
 
-import React, { PureComponent, type Node } from 'react';
+import React, { PureComponent, type Node } from "react";
 import {
     Animated,
     Dimensions,
     TouchableWithoutFeedback,
-    View
-} from 'react-native';
+    View,
+} from "react-native";
 
-import { BackButtonRegistry } from '../../../../mobile/back-button';
+import { BackButtonRegistry } from "../../../../mobile/back-button";
 
-import { type StyleType } from '../../../styles';
+import { type StyleType } from "../../../styles";
 
-import styles from './slidingviewstyles';
+import styles from "./slidingviewstyles";
 
 /**
  * The type of the React {@code Component} props of {@link SlidingView}.
  */
 type Props = {
-
     /**
      * The children of {@code SlidingView}.
      */
@@ -44,14 +43,14 @@ type Props = {
     /**
      * Style of the animated view.
      */
-    style: StyleType
+    style: StyleType,
+    transparent: boolean,
 };
 
 /**
  * The type of the React {@code Component} state of {@link SlidingView}.
  */
 type State = {
-
     /**
      * Whether the sliding overlay should be displayed/rendered/shown.
      */
@@ -65,7 +64,7 @@ type State = {
     /**
      * Offset to move the view out of the screen.
      */
-    positionOffset: number
+    positionOffset: number,
 };
 
 /**
@@ -84,7 +83,7 @@ export default class SlidingView extends PureComponent<Props, State> {
      */
     static getDerivedStateFromProps(props: Props, prevState: State) {
         return {
-            showOverlay: props.show || prevState.showOverlay
+            showOverlay: props.show || prevState.showOverlay,
         };
     }
 
@@ -96,19 +95,19 @@ export default class SlidingView extends PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        const { height, width } = Dimensions.get('window');
+        const { height, width } = Dimensions.get("window");
         const { position } = props;
 
         let positionOffset = height;
 
-        if (position === 'left' || position === 'right') {
+        if (position === "left" || position === "right") {
             positionOffset = width;
         }
 
         this.state = {
             showOverlay: false,
             sliderAnimation: new Animated.Value(0),
-            positionOffset
+            positionOffset,
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -163,19 +162,22 @@ export default class SlidingView extends PureComponent<Props, State> {
         if (!showOverlay) {
             return null;
         }
-
+        const isTransparent = this.props.transparent
+            ? { backgroundColor: "transparent" }
+            : "";
+        console.log(isTransparent);
         return (
-            <View
-                pointerEvents = 'box-none'
-                style = { styles.sliderViewContainer } >
-                <TouchableWithoutFeedback
-                    onPress = { this._onHide } >
-                    <View style = { styles.sliderViewShadow } />
+            <View pointerEvents="box-none" style={styles.sliderViewContainer}>
+                <TouchableWithoutFeedback onPress={this._onHide}>
+                    <View
+                        style={{ ...styles.sliderViewShadow, ...isTransparent }}
+                    />
                 </TouchableWithoutFeedback>
                 <Animated.View
-                    pointerEvents = 'box-none'
-                    style = { this._getContentStyle() }>
-                    { this.props.children }
+                    pointerEvents="box-none"
+                    style={this._getContentStyle()}
+                >
+                    {this.props.children}
                 </Animated.View>
             </View>
         );
@@ -192,31 +194,39 @@ export default class SlidingView extends PureComponent<Props, State> {
     _getContentStyle() {
         const style = {
             ...this.props.style,
-            ...styles.sliderViewContent
+            ...styles.sliderViewContent,
         };
         const { positionOffset } = this.state;
 
         switch (this.props.position) {
-        case 'bottom':
-            Object.assign(style, {
-                bottom: -positionOffset,
-                left: 0,
-                right: 0,
-                top: positionOffset
-            }, {
-                transform: [ { translateY: this.state.sliderAnimation } ]
-            });
-            break;
-        case 'left':
-            Object.assign(style, {
-                bottom: 0,
-                left: -positionOffset,
-                right: positionOffset,
-                top: 0
-            }, {
-                transform: [ { translateX: this.state.sliderAnimation } ]
-            });
-            break;
+            case "bottom":
+                Object.assign(
+                    style,
+                    {
+                        bottom: -positionOffset,
+                        left: 0,
+                        right: 0,
+                        top: positionOffset,
+                    },
+                    {
+                        transform: [{ translateY: this.state.sliderAnimation }],
+                    }
+                );
+                break;
+            case "left":
+                Object.assign(
+                    style,
+                    {
+                        bottom: 0,
+                        left: -positionOffset,
+                        right: positionOffset,
+                        top: 0,
+                    },
+                    {
+                        transform: [{ translateX: this.state.sliderAnimation }],
+                    }
+                );
+                break;
         }
 
         return style;
@@ -232,7 +242,7 @@ export default class SlidingView extends PureComponent<Props, State> {
     _onHardwareBackPress() {
         const { onHide } = this.props;
 
-        if (typeof onHide === 'function') {
+        if (typeof onHide === "function") {
             return onHide();
         }
 
@@ -248,12 +258,11 @@ export default class SlidingView extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onHide() {
-        this._setShow(false)
-            .then(() => {
-                const { onHide } = this.props;
+        this._setShow(false).then(() => {
+            const { onHide } = this.props;
 
-                onHide && onHide();
-            });
+            onHide && onHide();
+        });
     }
 
     _setShow: (boolean) => Promise<*>;
@@ -267,7 +276,7 @@ export default class SlidingView extends PureComponent<Props, State> {
      * @returns {Promise}
      */
     _setShow(show) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             if (!this._mounted) {
                 resolve();
 
@@ -278,25 +287,26 @@ export default class SlidingView extends PureComponent<Props, State> {
             const { position } = this.props;
             let toValue = positionOffset;
 
-            if (position === 'bottom' || position === 'right') {
+            if (position === "bottom" || position === "right") {
                 toValue = -positionOffset;
             }
 
-            Animated
-                .timing(
-                    /* value */ this.state.sliderAnimation,
-                    /* config */ {
-                        duration: 200,
-                        toValue: show ? toValue : 0,
-                        useNativeDriver: true
-                    })
-                .start(({ finished }) => {
-                    finished && this._mounted && !show
-                        && this.setState({ showOverlay: false }, () => {
-                            this.forceUpdate();
-                        });
-                    resolve();
-                });
+            Animated.timing(
+                /* value */ this.state.sliderAnimation,
+                /* config */ {
+                    duration: 200,
+                    toValue: show ? toValue : 0,
+                    useNativeDriver: true,
+                }
+            ).start(({ finished }) => {
+                finished &&
+                    this._mounted &&
+                    !show &&
+                    this.setState({ showOverlay: false }, () => {
+                        this.forceUpdate();
+                    });
+                resolve();
+            });
         });
     }
 }

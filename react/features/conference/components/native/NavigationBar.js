@@ -1,27 +1,32 @@
 // @flow
 
-import React, { Component } from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import React, { Component } from "react";
+import { SafeAreaView, Text, View } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
 
-import { getConferenceName } from '../../../base/conference';
-import { connect } from '../../../base/redux';
-import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
-import { isToolboxVisible } from '../../../toolbox';
+import { getConferenceName } from "../../../base/conference";
+import { connect } from "../../../base/redux";
+import {
+    PictureInPictureButton,
+    SmallEndCallButton,
+} from "../../../mobile/picture-in-picture";
+import { isToolboxVisible } from "../../../toolbox";
+import DesktopSharingButton from "../../../toolbox/components/native/DesktopSharingButton";
 
-import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
+import styles, { NAVBAR_GRADIENT_COLORS } from "./styles";
 
 type Props = {
-
     /**
      * Name of the meeting we're currently in.
      */
     _meetingName: string,
+    _bottomSheetStyles: StyleType,
 
     /**
      * True if the navigation bar should be visible.
      */
-    _visible: boolean
+    _visible: boolean,
+    _hostName: string,
 };
 
 /**
@@ -38,36 +43,48 @@ class NavigationBar extends Component<Props> {
         if (!this.props._visible) {
             return null;
         }
+        const buttonProps = {
+            afterClick: this._onCancel,
+            showLabel: true,
+        };
 
         return [
             <LinearGradient
-                colors = { NAVBAR_GRADIENT_COLORS }
-                key = { 1 }
-                pointerEvents = 'none'
-                style = { styles.gradient }>
+                colors={NAVBAR_GRADIENT_COLORS}
+                key={1}
+                pointerEvents="none"
+                style={styles.gradient}
+            >
                 <SafeAreaView>
-                    <View style = { styles.gradientStretchTop } />
+                    <View style={styles.gradientStretchTop} />
                 </SafeAreaView>
             </LinearGradient>,
-            <View
-                key = { 2 }
-                pointerEvents = 'box-none'
-                style = { styles.navBarWrapper }>
-                <PictureInPictureButton
-                    styles = { styles.navBarButton } />
-                <View
-                    pointerEvents = 'box-none'
-                    style = { styles.roomNameWrapper }>
+            <View key={2} pointerEvents="box-none" style={styles.navBarWrapper}>
+                <PictureInPictureButton styles={styles.navBarButton} />
+                <View pointerEvents="box-none" style={styles.roomNameWrapper}>
                     <Text
-                        numberOfLines = { 1 }
-                        style = { styles.roomName }>
-                        { this.props._meetingName }
+                        numberOfLines={2}
+                        style={{
+                            ...styles.roomName,
+                            textAlign: "center",
+                            marginTop: 8,
+                        }}
+                    >
+                        {"Product"}
+                        {"\n"}
+                        {this.props._hostName}
+                        {"'s "}
+                        {"room: "}
+                        {this.props._meetingName}
                     </Text>
                 </View>
-            </View>
+                <SmallEndCallButton
+                    styles={{ ...styles.customNavBarButton }}
+                    {...buttonProps}
+                />
+            </View>,
         ];
     }
-
 }
 
 /**
@@ -81,8 +98,9 @@ class NavigationBar extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
+        _hostName: state["features/base/participants"][0].name,
         _meetingName: getConferenceName(state),
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
     };
 }
 

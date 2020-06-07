@@ -1,31 +1,30 @@
 // @flow
 
-import React from 'react';
-import { KeyboardAvoidingView, SafeAreaView } from 'react-native';
+import React from "react";
+import { KeyboardAvoidingView, SafeAreaView } from "react-native";
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { translate } from '../../../base/i18n';
-import { HeaderWithNavigation, SlidingView } from '../../../base/react';
-import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
+import { ColorSchemeRegistry } from "../../../base/color-scheme";
+import { translate } from "../../../base/i18n";
+import { HeaderWithNavigation, SlidingView } from "../../../base/react";
+import { connect } from "../../../base/redux";
+import { StyleType } from "../../../base/styles";
 
 import AbstractChat, {
     _mapDispatchToProps,
     _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
-} from '../AbstractChat';
+    type Props as AbstractProps,
+} from "../AbstractChat";
 
-import ChatInputBar from './ChatInputBar';
-import MessageContainer from './MessageContainer';
-import MessageRecipient from './MessageRecipient';
-import styles from './styles';
+import ChatInputBar from "./ChatInputBar";
+import MessageContainer from "./MessageContainer";
+import MessageRecipient from "./MessageRecipient";
+import styles from "./styles";
 
 type Props = AbstractProps & {
-
     /**
      * The color-schemed stylesheet of the feature.
      */
-    _styles: StyleType
+    _styles: StyleType,
 };
 
 /**
@@ -54,26 +53,30 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <SlidingView
-                onHide = { this._onClose }
-                position = 'bottom'
-                show = { this.props._isOpen } >
+                onHide={this._onClose}
+                position="bottom"
+                show={this.props._isOpen}
+                transparent
+            >
                 <KeyboardAvoidingView
-                    behavior = 'padding'
-                    style = { styles.chatContainer }>
+                    behavior="padding"
+                    style={styles.chatContainer}
+                >
                     <HeaderWithNavigation
-                        headerLabelKey = 'chat.title'
-                        onPressBack = { this._onClose } />
-                    <SafeAreaView style = { _styles.backdrop }>
-                        <MessageContainer messages = { this.props._messages } />
+                        headerLabelKey="chat.title"
+                        onPressBack={this._onClose}
+                    />
+                    <SafeAreaView style={_styles.backdrop}>
+                        <MessageContainer messages={this.props._messages} />
                         <MessageRecipient />
-                        <ChatInputBar onSend = { this.props._onSendMessage } />
+                        <ChatInputBar onSend={this.props._onSendMessage} />
                     </SafeAreaView>
                 </KeyboardAvoidingView>
             </SlidingView>
         );
     }
 
-    _onClose: () => boolean
+    _onClose: () => boolean;
 
     /**
      * Closes the chat window.
@@ -100,7 +103,7 @@ class Chat extends AbstractChat<Props> {
 function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
-        _styles: ColorSchemeRegistry.get(state, 'Chat')
+        _styles: ColorSchemeRegistry.get(state, "Chat"),
     };
 }
 
