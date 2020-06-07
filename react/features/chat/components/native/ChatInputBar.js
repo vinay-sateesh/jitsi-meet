@@ -1,23 +1,21 @@
 // @flow
 
-import React, { Component } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import React, { Component } from "react";
+import { TextInput, TouchableOpacity, View } from "react-native";
 
-import { Icon, IconChatSend } from '../../../base/icons';
-import { Platform } from '../../../base/react';
+import { Icon, IconChatSend } from "../../../base/icons";
+import { Platform } from "../../../base/react";
 
-import styles from './styles';
+import styles from "./styles";
 
 type Props = {
-
     /**
      * Callback to invoke on message send.
      */
-    onSend: Function
+    onSend: Function,
 };
 
 type State = {
-
     /**
      * Boolean to show if an extra padding needs to be added to the bar.
      */
@@ -31,7 +29,7 @@ type State = {
     /**
      * Boolean to show or hide the send button.
      */
-    showSend: boolean
+    showSend: boolean,
 };
 
 /**
@@ -48,8 +46,8 @@ export default class ChatInputBar extends Component<Props, State> {
 
         this.state = {
             addPadding: false,
-            message: '',
-            showSend: false
+            message: "",
+            showSend: false,
         };
 
         this._onChangeText = this._onChangeText.bind(this);
@@ -65,32 +63,35 @@ export default class ChatInputBar extends Component<Props, State> {
     render() {
         return (
             <View
-                style = { [
+                style={[
                     styles.inputBar,
-                    this.state.addPadding ? styles.extraBarPadding : null
-                ] }>
+                    this.state.addPadding ? styles.extraBarPadding : null,
+                ]}
+            >
                 <TextInput
-                    blurOnSubmit = { false }
-                    multiline = { false }
-                    onBlur = { this._onFocused(false) }
-                    onChangeText = { this._onChangeText }
-                    onFocus = { this._onFocused(true) }
-                    onSubmitEditing = { this._onSubmit }
-                    returnKeyType = 'send'
-                    style = { styles.inputField }
-                    value = { this.state.message } />
-                {
-                    this.state.showSend && <TouchableOpacity onPress = { this._onSubmit }>
+                    blurOnSubmit={false}
+                    multiline={false}
+                    onBlur={this._onFocused(false)}
+                    onChangeText={this._onChangeText}
+                    onFocus={this._onFocused(true)}
+                    onSubmitEditing={this._onSubmit}
+                    returnKeyType="send"
+                    style={styles.inputField}
+                    value={this.state.message}
+                />
+                {this.state.showSend && (
+                    <TouchableOpacity onPress={this._onSubmit}>
                         <Icon
-                            src = { IconChatSend }
-                            style = { styles.sendButtonIcon } />
+                            src={IconChatSend}
+                            style={styles.sendButtonIcon}
+                        />
                     </TouchableOpacity>
-                }
+                )}
             </View>
         );
     }
 
-    _onChangeText: string => void;
+    _onChangeText: (string) => void;
 
     /**
      * Callback to handle the change of the value of the text field.
@@ -101,11 +102,11 @@ export default class ChatInputBar extends Component<Props, State> {
     _onChangeText(text) {
         this.setState({
             message: text,
-            showSend: Boolean(text)
+            showSend: Boolean(text),
         });
     }
 
-    _onFocused: boolean => Function;
+    _onFocused: (boolean) => Function;
 
     /**
      * Constructs a callback to be used to update the padding of the field if necessary.
@@ -115,9 +116,10 @@ export default class ChatInputBar extends Component<Props, State> {
      */
     _onFocused(focused) {
         return () => {
-            Platform.OS === 'android' && this.setState({
-                addPadding: focused
-            });
+            Platform.OS === "android" &&
+                this.setState({
+                    addPadding: focused,
+                });
         };
     }
 
@@ -133,8 +135,8 @@ export default class ChatInputBar extends Component<Props, State> {
 
         message && this.props.onSend(message);
         this.setState({
-            message: '',
-            showSend: false
+            message: "",
+            showSend: false,
         });
     }
 }

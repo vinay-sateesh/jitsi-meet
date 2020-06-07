@@ -1,19 +1,18 @@
 // @flow
 
-import { IconChat, IconChatUnread } from '../../../base/icons';
-import { getLocalParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
+import { IconChat, IconChatUnread } from "../../../base/icons";
+import { getLocalParticipant } from "../../../base/participants";
+import { connect } from "../../../base/redux";
 import {
     AbstractButton,
-    type AbstractButtonProps
-} from '../../../base/toolbox';
-import { openDisplayNamePrompt } from '../../../display-name';
+    type AbstractButtonProps,
+} from "../../../base/toolbox";
+import { openDisplayNamePrompt } from "../../../display-name";
 
-import { toggleChat } from '../../actions';
-import { getUnreadCount } from '../../functions';
+import { toggleChat } from "../../actions";
+import { getUnreadCount } from "../../functions";
 
 type Props = AbstractButtonProps & {
-
     /**
      * Function to display chat.
      *
@@ -35,16 +34,16 @@ type Props = AbstractButtonProps & {
     /**
      * The unread message count.
      */
-    _unreadMessageCount: number
+    _unreadMessageCount: number,
 };
 
 /**
  * Implements an {@link AbstractButton} to open the chat screen on mobile.
  */
 class ChatButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.chat';
+    accessibilityLabel = "toolbar.accessibilityLabel.chat";
     icon = IconChat;
-    label = 'toolbar.chat';
+    label = "toolbar.chat";
     toggledIcon = IconChatUnread;
 
     /**
@@ -105,7 +104,7 @@ function _mapDispatchToProps(dispatch: Function) {
          */
         _displayNameInputDialog(onPostSubmit) {
             dispatch(openDisplayNamePrompt(onPostSubmit));
-        }
+        },
     };
 }
 
@@ -122,7 +121,7 @@ function _mapStateToProps(state) {
 
     return {
         _showNamePrompt: !localParticipant.name,
-        _unreadMessageCount: getUnreadCount(state)
+        _unreadMessageCount: getUnreadCount(state),
     };
 }
 

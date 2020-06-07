@@ -54,15 +54,19 @@ export default {
     },
 
     inputBar: {
+        flex: 1,
         alignItems: "center",
-        borderTopColor: "rgb(209, 219, 231)",
-        borderTopWidth: 1,
+        borderColor: "rgb(209, 219, 231)", //was borderTopColor and borderTopWidth
+        borderWidth: 1,
+        borderRadius: 12,
         flexDirection: "row",
         paddingHorizontal: BoxModel.padding,
+        marginHorizontal: 5,
     },
 
     inputField: {
-        color: "rgb(28, 32, 37)",
+        // color: "rgb(28, 32, 37)",
+        color: "white",
         flex: 1,
         height: 48,
     },
@@ -101,7 +105,7 @@ export default {
     },
 
     sendButtonIcon: {
-        color: ColorPalette.darkGrey,
+        color: ColorPalette.white, //was darkGrey
         fontSize: 22,
     },
 

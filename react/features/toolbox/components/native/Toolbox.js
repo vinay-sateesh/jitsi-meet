@@ -12,13 +12,14 @@ import { ChatButton } from "../../../chat";
 import { InfoDialogButton } from "../../../invite";
 
 import { isToolboxVisible } from "../../functions";
-
+import type { Dispatch } from "redux";
 import AudioMuteButton from "../AudioMuteButton";
 import HangupButton from "../HangupButton";
-
+import { sendMessage } from "../../../chat/actions";
 import OverflowMenuButton from "./OverflowMenuButton";
 import styles from "./styles";
 import VideoMuteButton from "../VideoMuteButton";
+import ChatInputBar from "../../../chat/components/native/ChatInputBar";
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -28,7 +29,12 @@ type Props = {
      * Whether the chat feature has been enabled. The meeting info button will be displayed in its place when disabled.
      */
     _chatEnabled: boolean,
-
+    /**
+     * Function to send a text message.
+     *
+     * @protected
+     */
+    _onSendMessage: Function,
     /**
      * The color-schemed stylesheet of the feature.
      */
@@ -42,7 +48,7 @@ type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function,
+    dispatch: Dispatch<any>,
 };
 
 /**
@@ -106,14 +112,18 @@ class Toolbox extends PureComponent<Props> {
 
         return (
             <View pointerEvents="box-none" style={styles.toolbar}>
-                {_chatEnabled && (
+                {/* {_chatEnabled && (
                     <ChatButton
                         styles={buttonStylesBorderless}
                         toggledStyles={this._getChatButtonToggledStyle(
                             toggledButtonStyles
                         )}
                     />
+                )} */}
+                {_chatEnabled && (
+                    <ChatInputBar onSend={this.props._onSendMessage} />
                 )}
+
                 {!_chatEnabled && (
                     <InfoDialogButton
                         styles={buttonStyles}
@@ -160,4 +170,20 @@ function _mapStateToProps(state: Object): Object {
     };
 }
 
-export default connect(_mapStateToProps)(Toolbox);
+function _mapDispatchToProps(dispatch: Dispatch<any>) {
+    return {
+        /**
+         * Sends a text message.
+         *
+         * @private
+         * @param {string} text - The text message to be sent.
+         * @returns {void}
+         * @type {Function}
+         */
+        _onSendMessage(text: string) {
+            dispatch(sendMessage(text));
+        },
+    };
+}
+
+export default connect(_mapStateToProps, _mapDispatchToProps)(Toolbox);

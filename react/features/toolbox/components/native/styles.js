@@ -23,7 +23,7 @@ const toolbarButton = {
 
     // XXX We probably tested BoxModel.margin and discovered it to be too small
     // for our taste.
-    marginHorizontal: 7,
+    marginHorizontal: 5,
     width: BUTTON_SIZE,
 };
 
@@ -33,7 +33,7 @@ const toolbarButton = {
 const toolbarButtonIcon = {
     alignSelf: "center",
     color: ColorPalette.white, //was darkGrey
-    fontSize: 28,
+    fontSize: 30,
 };
 
 /**
