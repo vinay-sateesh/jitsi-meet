@@ -64,7 +64,7 @@ const styles = {
         flexDirection: "row",
         flexGrow: 0,
         justifyContent: "flex-end",
-        marginBottom: BoxModel.margin / 2,
+        // marginBottom: BoxModel.margin / 2,
         paddingHorizontal: BoxModel.margin,
     },
 

@@ -1,20 +1,19 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import { ColorSchemeRegistry } from '../../base/color-scheme';
-import { ParticipantView } from '../../base/participants';
-import { connect } from '../../base/redux';
-import { DimensionsDetector } from '../../base/responsive-ui';
-import { StyleType } from '../../base/styles';
+import { ColorSchemeRegistry } from "../../base/color-scheme";
+import { ParticipantView } from "../../base/participants";
+import { connect } from "../../base/redux";
+import { DimensionsDetector } from "../../base/responsive-ui";
+import { StyleType } from "../../base/styles";
 
-import { AVATAR_SIZE } from './styles';
+import { AVATAR_SIZE } from "./styles";
 
 /**
  * The type of the React {@link Component} props of {@link LargeVideo}.
  */
 type Props = {
-
     /**
      * The ID of the participant (to be) depicted by LargeVideo.
      *
@@ -37,7 +36,6 @@ type Props = {
  * The type of the React {@link Component} state of {@link LargeVideo}.
  */
 type State = {
-
     /**
      * Size for the Avatar. It will be dynamically adjusted based on the
      * available size.
@@ -48,12 +46,12 @@ type State = {
      * Whether the connectivity indicator will be shown or not. It will be true
      * by default, but it may be turned off if there is not enough space.
      */
-    useConnectivityInfoLabel: boolean
+    useConnectivityInfoLabel: boolean,
 };
 
 const DEFAULT_STATE = {
     avatarSize: AVATAR_SIZE,
-    useConnectivityInfoLabel: true
+    useConnectivityInfoLabel: true,
 };
 
 /**
@@ -64,7 +62,7 @@ const DEFAULT_STATE = {
  */
 class LargeVideo extends Component<Props, State> {
     state = {
-        ...DEFAULT_STATE
+        ...DEFAULT_STATE,
     };
 
     /** Initializes a new {@code LargeVideo} instance.
@@ -99,7 +97,7 @@ class LargeVideo extends Component<Props, State> {
         if (size < AVATAR_SIZE * 1.5) {
             nextState = {
                 avatarSize: size - 15, // Leave some margin.
-                useConnectivityInfoLabel: false
+                useConnectivityInfoLabel: false,
             };
         } else {
             nextState = DEFAULT_STATE;
@@ -115,28 +113,21 @@ class LargeVideo extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            avatarSize,
-            useConnectivityInfoLabel
-        } = this.state;
-        const {
-            _participantId,
-            _styles,
-            onClick
-        } = this.props;
+        const { avatarSize, useConnectivityInfoLabel } = this.state;
+        const { _participantId, _styles, onClick } = this.props;
 
         return (
-            <DimensionsDetector
-                onDimensionsChanged = { this._onDimensionsChanged }>
+            <DimensionsDetector onDimensionsChanged={this._onDimensionsChanged}>
                 <ParticipantView
-                    avatarSize = { avatarSize }
-                    onPress = { onClick }
-                    participantId = { _participantId }
-                    style = { _styles.largeVideo }
-                    testHintId = 'org.jitsi.meet.LargeVideo'
-                    useConnectivityInfoLabel = { useConnectivityInfoLabel }
-                    zOrder = { 0 }
-                    zoomEnabled = { true } />
+                    avatarSize={avatarSize}
+                    onPress={onClick}
+                    participantId={_participantId}
+                    style={_styles.largeVideo}
+                    testHintId="org.jitsi.meet.LargeVideo"
+                    useConnectivityInfoLabel={useConnectivityInfoLabel}
+                    zOrder={0}
+                    zoomEnabled={true}
+                />
             </DimensionsDetector>
         );
     }
@@ -154,8 +145,8 @@ class LargeVideo extends Component<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
-        _participantId: state['features/large-video'].participantId,
-        _styles: ColorSchemeRegistry.get(state, 'LargeVideo')
+        _participantId: state["features/large-video"].participantId,
+        _styles: ColorSchemeRegistry.get(state, "LargeVideo"),
     };
 }
 

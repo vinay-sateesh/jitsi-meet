@@ -77,7 +77,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                     <View style={messageBubbleStyle}>
                         <View style={styles.textWrapper}>
                             {this._renderDisplayName()}
-                            <Linkify linkStyle={styles.chatLink}>
+                            <Linkify color="white" linkStyle={styles.chatLink}>
                                 {replaceNonUnicodeEmojis(
                                     this._getMessageText()
                                 )}
@@ -86,7 +86,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                         </View>
                         {this._renderPrivateReplyButton()}
                     </View>
-                    {this._renderTimestamp()}
+                    {/* {this._renderTimestamp()} */}
                 </View>
             </View>
         );

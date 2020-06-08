@@ -10,7 +10,7 @@ import {
     PictureInPictureButton,
     SmallEndCallButton,
 } from "../../../mobile/picture-in-picture";
-import { isToolboxVisible } from "../../../toolbox";
+import { isToolboxVisible, isTopNavigationVisible } from "../../../toolbox";
 import DesktopSharingButton from "../../../toolbox/components/native/DesktopSharingButton";
 
 import styles, { NAVBAR_GRADIENT_COLORS } from "./styles";
@@ -100,7 +100,7 @@ function _mapStateToProps(state) {
     return {
         _hostName: state["features/base/participants"][0].name,
         _meetingName: getConferenceName(state),
-        _visible: isToolboxVisible(state),
+        _visible: isTopNavigationVisible(state),
     };
 }
 

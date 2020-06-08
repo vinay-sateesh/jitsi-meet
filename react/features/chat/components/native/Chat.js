@@ -101,22 +101,23 @@ class Chat extends AbstractChat<Props> {
                     headerLabelKey="chat.title"
                     onPressBack={this._onClose}
                 />
-                <TouchableWithoutFeedback
+                {/* <TouchableWithoutFeedback
                     onPress={Keyboard.dismiss}
-                    accessible={false}
+                    // accessible={false}
+                > */}
+                <SafeAreaView
+                    // onStartShouldSetResponder={() => true}
+                    style={{
+                        ..._styles.backdrop,
+                        flex: 1,
+                        // ...flexProp,
+                    }}
                 >
-                    <SafeAreaView
-                        style={{
-                            ..._styles.backdrop,
-
-                            ...flexProp,
-                        }}
-                    >
-                        <MessageContainer messages={this.props._messages} />
-                        <MessageRecipient />
-                        {/* <ChatInputBar onSend={this.props._onSendMessage} /> */}
-                    </SafeAreaView>
-                </TouchableWithoutFeedback>
+                    <MessageContainer messages={this.props._messages} />
+                    <MessageRecipient />
+                    {/* <ChatInputBar onSend={this.props._onSendMessage} /> */}
+                </SafeAreaView>
+                {/* </TouchableWithoutFeedback> */}
             </KeyboardAvoidingView>
             //</SlidingView>
         );

@@ -1,21 +1,20 @@
 // @flow
 
-import { PureComponent } from 'react';
+import { PureComponent } from "react";
 
-import { getLocalizedDateFormatter } from '../../base/i18n';
+import { getLocalizedDateFormatter } from "../../base/i18n";
 
-import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../constants';
+import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from "../constants";
 
 /**
  * Formatter string to display the message timestamp.
  */
-const TIMESTAMP_FORMAT = 'H:mm';
+const TIMESTAMP_FORMAT = "H:mm";
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChatMessage}.
  */
 export type Props = {
-
     /**
      * The representation of a chat message.
      */
@@ -42,7 +41,7 @@ export type Props = {
     /**
      * Invoked to receive translated strings.
      */
-    t: Function
+    t: Function,
 };
 
 /**
@@ -55,8 +54,9 @@ export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
      * @returns {string}
      */
     _getFormattedTimestamp() {
-        return getLocalizedDateFormatter(new Date(this.props.message.timestamp))
-            .format(TIMESTAMP_FORMAT);
+        return getLocalizedDateFormatter(
+            new Date(this.props.message.timestamp)
+        ).format(TIMESTAMP_FORMAT);
     }
 
     /**
@@ -68,9 +68,9 @@ export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
         const { message } = this.props;
 
         return message.messageType === MESSAGE_TYPE_ERROR
-            ? this.props.t('chat.error', {
-                error: message.message
-            })
+            ? this.props.t("chat.error", {
+                  error: message.message,
+              })
             : message.message;
     }
 
@@ -82,8 +82,11 @@ export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
     _getPrivateNoticeMessage() {
         const { message, t } = this.props;
 
-        return t('chat.privateNotice', {
-            recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : t('chat.you')
+        return t("chat.privateNotice", {
+            recipient:
+                message.messageType === MESSAGE_TYPE_LOCAL
+                    ? message.recipient
+                    : t("chat.you"),
         });
     }
 }

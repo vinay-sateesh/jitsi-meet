@@ -1,6 +1,6 @@
 // @flow
 
-import { ReducerRegistry, set } from '../base/redux';
+import { ReducerRegistry, set } from "../base/redux";
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -12,8 +12,9 @@ import {
     SET_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE,
-    TOGGLE_TOOLBOX_VISIBLE
-} from './actionTypes';
+    TOGGLE_TOOLBOX_VISIBLE,
+    TOGGLE_TOP_NAVIGATION_VISIBLE,
+} from "./actionTypes";
 
 declare var interfaceConfig: Object;
 
@@ -41,11 +42,11 @@ function _getInitialState() {
     // Default toolbox timeout for mobile app.
     let timeoutMS = 5000;
 
-    if (typeof interfaceConfig !== 'undefined') {
+    if (typeof interfaceConfig !== "undefined") {
         if (interfaceConfig.INITIAL_TOOLBAR_TIMEOUT) {
             timeoutMS = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
         }
-        if (typeof interfaceConfig.TOOLBAR_ALWAYS_VISIBLE !== 'undefined') {
+        if (typeof interfaceConfig.TOOLBAR_ALWAYS_VISIBLE !== "undefined") {
             alwaysVisible = interfaceConfig.TOOLBAR_ALWAYS_VISIBLE;
         }
     }
@@ -107,70 +108,87 @@ function _getInitialState() {
          *
          * @type {boolean}
          */
-        visible
+        visible,
     };
 }
 
 ReducerRegistry.register(
-    'features/toolbox',
+    "features/toolbox",
     (state: Object = _getInitialState(), action: Object) => {
         switch (action.type) {
-        case CLEAR_TOOLBOX_TIMEOUT:
-            return {
-                ...state,
-                timeoutID: undefined
-            };
+            case CLEAR_TOOLBOX_TIMEOUT:
+                return {
+                    ...state,
+                    timeoutID: undefined,
+                };
 
-        case FULL_SCREEN_CHANGED:
-            return {
-                ...state,
-                fullScreen: action.fullScreen
-            };
+            case FULL_SCREEN_CHANGED:
+                return {
+                    ...state,
+                    fullScreen: action.fullScreen,
+                };
 
-        case SET_OVERFLOW_MENU_VISIBLE:
-            return {
-                ...state,
-                overflowMenuVisible: action.visible
-            };
+            case SET_OVERFLOW_MENU_VISIBLE:
+                return {
+                    ...state,
+                    overflowMenuVisible: action.visible,
+                };
 
-        case SET_TOOLBAR_HOVERED:
-            return {
-                ...state,
-                hovered: action.hovered
-            };
+            case SET_TOOLBAR_HOVERED:
+                return {
+                    ...state,
+                    hovered: action.hovered,
+                };
 
-        case SET_TOOLBOX_ALWAYS_VISIBLE:
-            return {
-                ...state,
-                alwaysVisible: action.alwaysVisible,
-                visible: action.alwaysVisible === true ? true : state.visible
-            };
+            case SET_TOOLBOX_ALWAYS_VISIBLE:
+                return {
+                    ...state,
+                    alwaysVisible: action.alwaysVisible,
+                    visible:
+                        action.alwaysVisible === true ? true : state.visible,
+                };
 
-        case SET_TOOLBOX_ENABLED:
-            return {
-                ...state,
-                enabled: action.enabled
-            };
+            case SET_TOOLBOX_ENABLED:
+                return {
+                    ...state,
+                    enabled: action.enabled,
+                };
 
-        case SET_TOOLBOX_TIMEOUT:
-            return {
-                ...state,
-                timeoutID: action.timeoutID,
-                timeoutMS: action.timeoutMS
-            };
+            case SET_TOOLBOX_TIMEOUT:
+                return {
+                    ...state,
+                    timeoutID: action.timeoutID,
+                    timeoutMS: action.timeoutMS,
+                };
 
-        case SET_TOOLBOX_TIMEOUT_MS:
-            return {
-                ...state,
-                timeoutMS: action.timeoutMS
-            };
+            case SET_TOOLBOX_TIMEOUT_MS:
+                return {
+                    ...state,
+                    timeoutMS: action.timeoutMS,
+                };
 
-        case SET_TOOLBOX_VISIBLE:
-            return set(state, 'visible', state.alwaysVisible || action.visible);
+            case SET_TOOLBOX_VISIBLE:
+                return set(
+                    state,
+                    "visible",
+                    state.alwaysVisible || action.visible
+                );
 
-        case TOGGLE_TOOLBOX_VISIBLE:
-            return set(state, 'visible', state.alwaysVisible || !state.visible);
+            case TOGGLE_TOOLBOX_VISIBLE:
+                return set(
+                    state,
+                    "visible",
+                    state.alwaysVisible || !state.visible
+                );
+
+            case TOGGLE_TOP_NAVIGATION_VISIBLE:
+                return set(
+                    state,
+                    "topNavigationVisible",
+                    !state.topNavigationVisible
+                );
         }
 
         return state;
-    });
+    }
+);

@@ -9,9 +9,9 @@ import {
     SET_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE,
-    TOGGLE_TOOLBOX_VISIBLE
-} from './actionTypes';
-
+    TOGGLE_TOOLBOX_VISIBLE,
+    TOGGLE_TOP_NAVIGATION_VISIBLE,
+} from "./actionTypes";
 
 /**
  * Signals that toolbox timeout should be cleared.
@@ -22,7 +22,7 @@ import {
  */
 export function clearToolboxTimeout(): Object {
     return {
-        type: CLEAR_TOOLBOX_TIMEOUT
+        type: CLEAR_TOOLBOX_TIMEOUT,
     };
 }
 
@@ -38,7 +38,7 @@ export function clearToolboxTimeout(): Object {
 export function setOverflowMenuVisible(visible: boolean): Object {
     return {
         type: SET_OVERFLOW_MENU_VISIBLE,
-        visible
+        visible,
     };
 }
 
@@ -54,7 +54,7 @@ export function setOverflowMenuVisible(visible: boolean): Object {
 export function setToolbarHovered(hovered: boolean): Object {
     return {
         type: SET_TOOLBAR_HOVERED,
-        hovered
+        hovered,
     };
 }
 
@@ -70,7 +70,7 @@ export function setToolbarHovered(hovered: boolean): Object {
 export function setToolboxAlwaysVisible(alwaysVisible: boolean): Object {
     return {
         type: SET_TOOLBOX_ALWAYS_VISIBLE,
-        alwaysVisible
+        alwaysVisible,
     };
 }
 
@@ -88,7 +88,7 @@ export function setToolboxAlwaysVisible(alwaysVisible: boolean): Object {
 export function setToolboxEnabled(enabled: boolean): Object {
     return {
         type: SET_TOOLBOX_ENABLED,
-        enabled
+        enabled,
     };
 }
 
@@ -103,12 +103,14 @@ export function setToolboxEnabled(enabled: boolean): Object {
  *     timeoutMS: number
  * }}
  */
-export function setToolboxTimeout(handler: Function, timeoutMS: number)
-      : Object {
+export function setToolboxTimeout(
+    handler: Function,
+    timeoutMS: number
+): Object {
     return {
         type: SET_TOOLBOX_TIMEOUT,
         handler,
-        timeoutMS
+        timeoutMS,
     };
 }
 
@@ -126,7 +128,7 @@ export function setToolboxTimeout(handler: Function, timeoutMS: number)
 export function setToolboxTimeoutMS(timeoutMS: number): Object {
     return {
         type: SET_TOOLBOX_TIMEOUT_MS,
-        timeoutMS
+        timeoutMS,
     };
 }
 
@@ -142,7 +144,7 @@ export function setToolboxTimeoutMS(timeoutMS: number): Object {
 export function setToolboxVisible(visible: boolean): Object {
     return {
         type: SET_TOOLBOX_VISIBLE,
-        visible
+        visible,
     };
 }
 
@@ -155,6 +157,19 @@ export function setToolboxVisible(visible: boolean): Object {
  */
 export function toggleToolboxVisible() {
     return {
-        type: TOGGLE_TOOLBOX_VISIBLE
+        type: TOGGLE_TOOLBOX_VISIBLE,
+    };
+}
+
+/**
+ * Action to toggle the toolbox visibility.
+ *
+ * @returns {{
+ *     type: TOGGLE_TOOLBOX_VISIBLE
+ * }}
+ */
+export function toggleTopNavigationVisible() {
+    return {
+        type: TOGGLE_TOP_NAVIGATION_VISIBLE,
     };
 }

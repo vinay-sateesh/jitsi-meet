@@ -68,7 +68,7 @@ export default {
         // color: "rgb(28, 32, 37)",
         color: "white",
         flex: 1,
-        height: 48,
+        height: 36,
         maxHeight: 42,
     },
 
@@ -89,7 +89,7 @@ export default {
         alignItems: "flex-start",
         flex: 1,
         flexDirection: "row",
-        // marginHorizontal: 17,
+        marginHorizontal: 17,
         marginVertical: 4,
     },
 
@@ -123,7 +123,7 @@ export default {
     textWrapper: {
         alignItems: "flex-start",
         flexDirection: "column",
-        padding: 9,
+        // padding: 9,
     },
 
     /**
@@ -141,19 +141,22 @@ ColorSchemeRegistry.register("Chat", {
      */
     backdrop: {
         // backgroundColor: schemeColor('background'),
-        backgroundColor: "transparent",
+        backgroundColor: "rgba(0,0,0,0.2)",
     },
 
     /**
      * The text node for the display name.
      */
     displayName: {
-        color: schemeColor("displayName"),
-        fontSize: 13,
+        // color: schemeColor("displayName"),
+        color: "white",
+        fontWeight: "bold",
+        fontSize: 15, //was 13
+        marginTop: 4,
     },
 
     localMessageBubble: {
-        backgroundColor: schemeColor("localMsgBackground"),
+        // backgroundColor: schemeColor("localMsgBackground"),
         borderTopRightRadius: 0,
     },
 
@@ -171,6 +174,7 @@ ColorSchemeRegistry.register("Chat", {
 
     messageRecipientText: {
         color: schemeColor("text"),
+        // color: "red",
         flex: 1,
     },
 
@@ -185,7 +189,7 @@ ColorSchemeRegistry.register("Chat", {
     },
 
     remoteMessageBubble: {
-        backgroundColor: schemeColor("remoteMsgBackground"),
+        // backgroundColor: schemeColor("remoteMsgBackground"),
         borderTopLeftRadius: 0,
     },
 

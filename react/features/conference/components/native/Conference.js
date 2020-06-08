@@ -38,7 +38,13 @@ import { LargeVideo } from "../../../large-video";
 import { BackButtonRegistry } from "../../../mobile/back-button";
 import { AddPeopleDialog, CalleeInfoContainer } from "../../../invite";
 import { Captions } from "../../../subtitles";
-import { isToolboxVisible, setToolboxVisible, Toolbox } from "../../../toolbox";
+import {
+    isToolboxVisible,
+    isTopNavigationVisible,
+    setToolboxVisible,
+    Toolbox,
+    toggleTopNavigationVisible,
+} from "../../../toolbox";
 
 import {
     AbstractConference,
@@ -149,6 +155,7 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentDidMount() {
+        this._setToolboxVisible(true);
         BackButtonRegistry.addListener(this._onHardwareBackPress);
     }
 
@@ -195,7 +202,9 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     _onClick() {
-        this._setToolboxVisible(!this.props._toolboxVisible);
+        // this._setToolboxVisible(!this.props._toolboxVisible);
+
+        this.props.dispatch(toggleTopNavigationVisible());
         Keyboard.dismiss();
     }
 
@@ -522,6 +531,7 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _toolboxVisible: isToolboxVisible(state),
+        _topNavigationVisible: isTopNavigationVisible(state),
     };
 }
 

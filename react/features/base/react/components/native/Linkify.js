@@ -1,15 +1,14 @@
 // @flow
 
-import React, { Component } from 'react';
-import { Text } from 'react-native';
-import ReactLinkify from 'react-linkify';
+import React, { Component } from "react";
+import { Text } from "react-native";
+import ReactLinkify from "react-linkify";
 
-import { type StyleType } from '../../../styles';
+import { type StyleType } from "../../../styles";
 
-import Link from './Link';
+import Link from "./Link";
 
 type Props = {
-
     /**
      * The children of the component.
      */
@@ -18,7 +17,8 @@ type Props = {
     /**
      * The extra styles to be applied to links.
      */
-    linkStyle: StyleType
+    linkStyle: StyleType,
+    color: string,
 };
 
 /**
@@ -43,10 +43,9 @@ export default class Linkify extends Component<Props> {
      */
     render() {
         return (
-            <ReactLinkify
-                componentDecorator = { this._componentDecorator }>
-                <Text selectable = { true }>
-                    { this.props.children }
+            <ReactLinkify componentDecorator={this._componentDecorator}>
+                <Text style={{ color: this.props.color }} selectable={true}>
+                    {this.props.children}
                 </Text>
             </ReactLinkify>
         );
@@ -62,12 +61,13 @@ export default class Linkify extends Component<Props> {
      * @param {string} key - The component key.
      * @returns {React$Node}
      */
-    _componentDecorator(decoratedHref: string, decoratedText: string, key: number) {
+    _componentDecorator(
+        decoratedHref: string,
+        decoratedText: string,
+        key: number
+    ) {
         return (
-            <Link
-                key = { key }
-                style = { this.props.linkStyle }
-                url = { decoratedHref }>
+            <Link key={key} style={this.props.linkStyle} url={decoratedHref}>
                 {decoratedText}
             </Link>
         );
