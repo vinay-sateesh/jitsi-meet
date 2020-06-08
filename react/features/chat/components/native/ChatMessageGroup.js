@@ -1,20 +1,19 @@
 // @flow
 
-import React, { Component } from 'react';
-import { FlatList } from 'react-native';
+import React, { Component } from "react";
+import { FlatList } from "react-native";
 
-import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../../constants';
+import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from "../../constants";
 
-import ChatMessage from './ChatMessage';
-import styles from './styles';
+import ChatMessage from "./ChatMessage";
+import styles from "./styles";
 
 type Props = {
-
-  /**
-   * The messages array to render.
-   */
-  messages: Array<Object>
-}
+    /**
+     * The messages array to render.
+     */
+    messages: Array<Object>,
+};
 
 /**
  * Implements a container to render all the chat messages in a conference.
@@ -40,15 +39,16 @@ export default class ChatMessageGroup extends Component<Props> {
     render() {
         return (
             <FlatList
-                data = { this.props.messages }
-                inverted = { true }
-                keyExtractor = { this._keyExtractor }
-                renderItem = { this._renderMessage }
-                style = { styles.messageContainer } />
+                data={this.props.messages}
+                inverted={true}
+                keyExtractor={this._keyExtractor}
+                renderItem={this._renderMessage}
+                style={styles.messageContainer}
+            />
         );
     }
 
-    _keyExtractor: Object => string
+    _keyExtractor: (Object) => string;
 
     /**
      * Key extractor for the flatlist.
@@ -62,7 +62,7 @@ export default class ChatMessageGroup extends Component<Props> {
         return `key_${index}`;
     }
 
-    _renderMessage: Object => React$Element<*>;
+    _renderMessage: (Object) => React$Element<*>;
 
     /**
      * Renders a single chat message.
@@ -73,16 +73,20 @@ export default class ChatMessageGroup extends Component<Props> {
     _renderMessage({ index, item: message }) {
         return (
             <ChatMessage
-                message = { message }
-                showAvatar = {
-                    this.props.messages[0].messageType !== MESSAGE_TYPE_LOCAL
-                        && index === this.props.messages.length - 1
+                message={message}
+                showAvatar={
+                    // this.props.messages[0].messageType !== MESSAGE_TYPE_LOCAL
+                    //     && index === this.props.messages.length - 1
+                    index === this.props.messages.length - 1
                 }
-                showDisplayName = {
-                    this.props.messages[0].messageType === MESSAGE_TYPE_REMOTE
-                        && index === this.props.messages.length - 1
+                showDisplayName={
+                    // this.props.messages[0].messageType ===
+                    //     MESSAGE_TYPE_REMOTE &&
+                    // index === this.props.messages.length - 1
+                    index === this.props.messages.length - 1
                 }
-                showTimestamp = { index === 0 } />
+                showTimestamp={index === 0}
+            />
         );
     }
 }

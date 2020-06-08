@@ -156,4 +156,14 @@ export default {
         // not enough.
         top: BoxModel.margin * 3,
     },
+    chatOverlay: {
+        bottom: 0,
+        // position: "absolute",
+
+        // flex: 1,
+        height: "50%",
+        width: "100%",
+        left: 0,
+        right: 0,
+    },
 };

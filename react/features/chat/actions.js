@@ -5,8 +5,9 @@ import {
     CLEAR_MESSAGES,
     SEND_MESSAGE,
     SET_PRIVATE_MESSAGE_RECIPIENT,
-    TOGGLE_CHAT
-} from './actionTypes';
+    TOGGLE_CHAT,
+    CHAT_ALWAYS_OPEN,
+} from "./actionTypes";
 
 /**
  * Adds a chat message to the collection of messages.
@@ -33,7 +34,7 @@ import {
 export function addMessage(messageDetails: Object) {
     return {
         type: ADD_MESSAGE,
-        ...messageDetails
+        ...messageDetails,
     };
 }
 
@@ -46,7 +47,7 @@ export function addMessage(messageDetails: Object) {
  */
 export function clearMessages() {
     return {
-        type: CLEAR_MESSAGES
+        type: CLEAR_MESSAGES,
     };
 }
 
@@ -65,7 +66,7 @@ export function sendMessage(message: string, ignorePrivacy: boolean = false) {
     return {
         type: SEND_MESSAGE,
         ignorePrivacy,
-        message
+        message,
     };
 }
 
@@ -81,7 +82,7 @@ export function sendMessage(message: string, ignorePrivacy: boolean = false) {
 export function setPrivateMessageRecipient(participant: Object) {
     return {
         participant,
-        type: SET_PRIVATE_MESSAGE_RECIPIENT
+        type: SET_PRIVATE_MESSAGE_RECIPIENT,
     };
 }
 
@@ -94,6 +95,19 @@ export function setPrivateMessageRecipient(participant: Object) {
  */
 export function toggleChat() {
     return {
-        type: TOGGLE_CHAT
+        type: TOGGLE_CHAT,
+    };
+}
+
+/**
+ * Keeps chat open always
+ *
+ * @returns {{
+ *     type: CHAT_ALWAYS_OPEN
+ * }}
+ */
+export function keepChatOpen() {
+    return {
+        type: CHAT_ALWAYS_OPEN,
     };
 }

@@ -69,6 +69,7 @@ export default {
         color: "white",
         flex: 1,
         height: 48,
+        maxHeight: 42,
     },
 
     messageBubble: {
@@ -88,7 +89,7 @@ export default {
         alignItems: "flex-start",
         flex: 1,
         flexDirection: "row",
-        marginHorizontal: 17,
+        // marginHorizontal: 17,
         marginVertical: 4,
     },
 

@@ -84,40 +84,41 @@ class Chat extends AbstractChat<Props> {
      */
     render() {
         const { _styles } = this.props;
-        const flexProp = this.state.keyboardUp ? { flex: 1 } : { flex: 0.5 };
+        // this.props._AlwaysOpenChat();
+        const flexProp = this.state.keyboardUp ? { flex: 1 } : { flex: 1 };
         return (
-            <SlidingView
-                onHide={this._onClose}
-                position="bottom"
-                show={this.props._isOpen}
-                transparent
+            // <SlidingView
+            //     onHide={this._onClose}
+            //     position="bottom"
+            //     show={this.props._isOpen}
+            //     transparent
+            // >
+            <KeyboardAvoidingView
+                behavior="padding"
+                style={styles.chatContainer}
             >
-                <KeyboardAvoidingView
-                    behavior="padding"
-                    style={styles.chatContainer}
+                <HeaderWithNavigation
+                    headerLabelKey="chat.title"
+                    onPressBack={this._onClose}
+                />
+                <TouchableWithoutFeedback
+                    onPress={Keyboard.dismiss}
+                    accessible={false}
                 >
-                    <HeaderWithNavigation
-                        headerLabelKey="chat.title"
-                        onPressBack={this._onClose}
-                    />
-                    <TouchableWithoutFeedback
-                        onPress={Keyboard.dismiss}
-                        accessible={false}
-                    >
-                        <View
-                            style={{
-                                ..._styles.backdrop,
+                    <SafeAreaView
+                        style={{
+                            ..._styles.backdrop,
 
-                                ...flexProp,
-                            }}
-                        >
-                            <MessageContainer messages={this.props._messages} />
-                            <MessageRecipient />
-                            <ChatInputBar onSend={this.props._onSendMessage} />
-                        </View>
-                    </TouchableWithoutFeedback>
-                </KeyboardAvoidingView>
-            </SlidingView>
+                            ...flexProp,
+                        }}
+                    >
+                        <MessageContainer messages={this.props._messages} />
+                        <MessageRecipient />
+                        {/* <ChatInputBar onSend={this.props._onSendMessage} /> */}
+                    </SafeAreaView>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
+            //</SlidingView>
         );
     }
 

@@ -1,17 +1,16 @@
 // @flow
 
-import { Component } from 'react';
-import type { Dispatch } from 'redux';
+import { Component } from "react";
+import type { Dispatch } from "redux";
 
-import { getLocalParticipant } from '../../base/participants';
+import { getLocalParticipant } from "../../base/participants";
 
-import { sendMessage, toggleChat } from '../actions';
+import { sendMessage, toggleChat, keepChatOpen } from "../actions";
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChat}.
  */
 export type Props = {
-
     /**
      * True if the chat window should be rendered.
      */
@@ -33,6 +32,7 @@ export type Props = {
      * Function to toggle the chat window.
      */
     _onToggleChat: Function,
+    _AlwaysOpenChat: Function,
 
     /**
      * Whether or not to block chat access with a nickname input form.
@@ -47,7 +47,7 @@ export type Props = {
     /**
      * Function to be used to translate i18n labels.
      */
-    t: Function
+    t: Function,
 };
 
 /**
@@ -86,7 +86,15 @@ export function _mapDispatchToProps(dispatch: Dispatch<any>) {
          */
         _onSendMessage(text: string) {
             dispatch(sendMessage(text));
-        }
+        },
+        /**
+         * Keeps chat open
+         *
+         * @returns {Function}
+         */
+        _AlwaysOpenChat() {
+            dispatch(keepChatOpen());
+        },
     };
 }
 
@@ -103,12 +111,12 @@ export function _mapDispatchToProps(dispatch: Dispatch<any>) {
  * }}
  */
 export function _mapStateToProps(state: Object) {
-    const { isOpen, messages } = state['features/chat'];
+    const { isOpen, messages } = state["features/chat"];
     const _localParticipant = getLocalParticipant(state);
 
     return {
         _isOpen: isOpen,
         _messages: messages,
-        _showNamePrompt: !_localParticipant.name
+        _showNamePrompt: !_localParticipant.name,
     };
 }

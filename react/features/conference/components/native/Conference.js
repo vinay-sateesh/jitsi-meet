@@ -1,7 +1,14 @@
 // @flow
 
 import React from "react";
-import { NativeModules, SafeAreaView, StatusBar } from "react-native";
+import {
+    NativeModules,
+    SafeAreaView,
+    StatusBar,
+    TouchableWithoutFeedback,
+    View,
+    Keyboard,
+} from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 
 import { appNavigate } from "../../../app";
@@ -172,6 +179,7 @@ class Conference extends AbstractConference<Props, *> {
                     hidden={true}
                     translucent={true}
                 />
+
                 {this._renderContent()}
             </Container>
         );
@@ -188,6 +196,7 @@ class Conference extends AbstractConference<Props, *> {
      */
     _onClick() {
         this._setToolboxVisible(!this.props._toolboxVisible);
+        Keyboard.dismiss();
     }
 
     _onHardwareBackPress: () => boolean;
@@ -258,7 +267,7 @@ class Conference extends AbstractConference<Props, *> {
         return (
             <>
                 <AddPeopleDialog />
-                <Chat />
+
                 <SharedDocument />
 
                 {
@@ -326,10 +335,6 @@ class Conference extends AbstractConference<Props, *> {
                         />
                     )}
 
-                    {/*
-                     * The Toolbox is in a stacking layer below the Filmstrip.
-                     */}
-
                     {
                         /*
                          * The Filmstrip is in a stacking layer above the
@@ -341,6 +346,18 @@ class Conference extends AbstractConference<Props, *> {
                          */
                         _shouldDisplayTileView ? undefined : <Filmstrip />
                     }
+                    <View
+                        style={{
+                            ...styles.chatOverlay,
+                            // backgroundColor: "red",
+                            // zIndex: 10000,
+                        }}
+                    >
+                        <Chat />
+                    </View>
+                    {/*
+                     * The Toolbox is in a stacking layer below the Filmstrip.
+                     */}
                     <Toolbox />
                 </SafeAreaView>
 

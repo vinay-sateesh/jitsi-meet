@@ -1,26 +1,25 @@
 // @flow
 
-import React from 'react';
-import { Text, TouchableHighlight, View } from 'react-native';
+import React from "react";
+import { Text, TouchableHighlight, View } from "react-native";
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { translate } from '../../../base/i18n';
-import { Icon, IconCancelSelection } from '../../../base/icons';
-import { connect } from '../../../base/redux';
-import { type StyleType } from '../../../base/styles';
+import { ColorSchemeRegistry } from "../../../base/color-scheme";
+import { translate } from "../../../base/i18n";
+import { Icon, IconCancelSelection } from "../../../base/icons";
+import { connect } from "../../../base/redux";
+import { type StyleType } from "../../../base/styles";
 
 import AbstractMessageRecipient, {
     _mapDispatchToProps,
     _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
-} from '../AbstractMessageRecipient';
+    type Props as AbstractProps,
+} from "../AbstractMessageRecipient";
 
 type Props = AbstractProps & {
-
     /**
      * The color-schemed stylesheet of the feature.
      */
-    _styles: StyleType
+    _styles: StyleType,
 };
 
 /**
@@ -40,18 +39,26 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
         }
 
         const { t } = this.props;
+        // console.log(
+        //     t("chat.messageTo", {
+        //         recipient: _privateMessageRecipient,
+        //     })
+        // );
 
         return (
-            <View style = { _styles.messageRecipientContainer }>
-                <Text style = { _styles.messageRecipientText }>
-                    { t('chat.messageTo', {
-                        recipient: _privateMessageRecipient
-                    }) }
+            <View style={_styles.messageRecipientContainer}>
+                <Text style={_styles.messageRecipientText}>
+                    {t("chat.messageTo", {
+                        recipient: _privateMessageRecipient,
+                    })}
                 </Text>
-                <TouchableHighlight onPress = { this.props._onRemovePrivateMessageRecipient }>
+                <TouchableHighlight
+                    onPress={this.props._onRemovePrivateMessageRecipient}
+                >
                     <Icon
-                        src = { IconCancelSelection }
-                        style = { _styles.messageRecipientCancelIcon } />
+                        src={IconCancelSelection}
+                        style={_styles.messageRecipientCancelIcon}
+                    />
                 </TouchableHighlight>
             </View>
         );
@@ -67,8 +74,10 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
 function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
-        _styles: ColorSchemeRegistry.get(state, 'Chat')
+        _styles: ColorSchemeRegistry.get(state, "Chat"),
     };
 }
 
-export default translate(connect(_mapStateToProps, _mapDispatchToProps)(MessageRecipient));
+export default translate(
+    connect(_mapStateToProps, _mapDispatchToProps)(MessageRecipient)
+);

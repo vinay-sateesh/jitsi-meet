@@ -1,7 +1,11 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { View } from "react-native";
+import {
+    View,
+    TouchableWithoutFeedback,
+    KeyboardAvoidingView,
+} from "react-native";
 
 import { ColorSchemeRegistry } from "../../../base/color-scheme";
 import { CHAT_ENABLED, getFeatureFlag } from "../../../base/flags";
@@ -111,7 +115,10 @@ class Toolbox extends PureComponent<Props> {
         } = _styles;
 
         return (
-            <View pointerEvents="box-none" style={styles.toolbar}>
+            <KeyboardAvoidingView
+                pointerEvents="box-none"
+                style={styles.toolbar}
+            >
                 {/* {_chatEnabled && (
                     <ChatButton
                         styles={buttonStylesBorderless}
@@ -120,9 +127,8 @@ class Toolbox extends PureComponent<Props> {
                         )}
                     />
                 )} */}
-                {_chatEnabled && (
-                    <ChatInputBar onSend={this.props._onSendMessage} />
-                )}
+
+                <ChatInputBar onSend={this.props._onSendMessage} />
 
                 {!_chatEnabled && (
                     <InfoDialogButton
@@ -144,7 +150,7 @@ class Toolbox extends PureComponent<Props> {
                     styles={buttonStylesBorderless}
                     toggledStyles={toggledButtonStyles}
                 />
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 }
