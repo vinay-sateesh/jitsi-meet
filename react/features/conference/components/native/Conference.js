@@ -355,6 +355,7 @@ class Conference extends AbstractConference<Props, *> {
                          */
                         _shouldDisplayTileView ? undefined : <Filmstrip />
                     }
+
                     <View
                         style={{
                             ...styles.chatOverlay,

@@ -1,6 +1,6 @@
 // @flow
 
-import { BoxModel, ColorPalette } from '../../styles';
+import { BoxModel, ColorPalette } from "../../styles";
 
 /**
  * The styles of the feature base/participants.
@@ -10,8 +10,8 @@ export default {
      * Container for the avatar in the view.
      */
     avatarContainer: {
-        alignItems: 'center',
-        justifyContent: 'center'
+        alignItems: "center",
+        justifyContent: "center",
     },
 
     /**
@@ -22,7 +22,7 @@ export default {
         fontSize: 12,
         marginVertical: BoxModel.margin,
         marginHorizontal: BoxModel.margin,
-        textAlign: 'center'
+        textAlign: "center",
     },
 
     /**
@@ -30,18 +30,18 @@ export default {
      * connectivity problem.
      */
     connectionInfoContainer: {
-        alignSelf: 'center',
+        alignSelf: "center",
         backgroundColor: ColorPalette.darkGrey,
         borderRadius: 20,
-        marginTop: BoxModel.margin
+        marginTop: BoxModel.margin,
     },
 
     /**
      * {@code ParticipantView} style.
      */
     participantView: {
-        alignItems: 'stretch',
+        alignItems: "stretch",
         flex: 1,
-        justifyContent: 'center'
-    }
+        justifyContent: "center",
+    },
 };

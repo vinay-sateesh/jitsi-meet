@@ -1,29 +1,25 @@
 // @flow
 
-import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import React, { Component } from "react";
+import { Text, View } from "react-native";
 
-import { Avatar } from '../../avatar';
-import { translate } from '../../i18n';
-import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
-import {
-    MEDIA_TYPE,
-    VideoTrack
-} from '../../media';
-import { Container, TintedView } from '../../react';
-import { connect } from '../../redux';
-import type { StyleType } from '../../styles';
-import { TestHint } from '../../testing/components';
-import { getTrackByMediaTypeAndParticipant } from '../../tracks';
+import { Avatar } from "../../avatar";
+import { translate } from "../../i18n";
+import { JitsiParticipantConnectionStatus } from "../../lib-jitsi-meet";
+import { MEDIA_TYPE, VideoTrack } from "../../media";
+import { Container, TintedView } from "../../react";
+import { connect } from "../../redux";
+import type { StyleType } from "../../styles";
+import { TestHint } from "../../testing/components";
+import { getTrackByMediaTypeAndParticipant } from "../../tracks";
 
-import { shouldRenderParticipantVideo } from '../functions';
-import styles from './styles';
+import { shouldRenderParticipantVideo } from "../functions";
+import styles from "./styles";
 
 /**
  * The type of the React {@link Component} props of {@link ParticipantView}.
  */
 type Props = {
-
     /**
      * The connection status of the participant. Her video will only be rendered
      * if the connection status is 'active'; otherwise, the avatar will be
@@ -118,7 +114,7 @@ type Props = {
     /**
      * Indicates whether zooming (pinch to zoom and/or drag) is enabled.
      */
-    zoomEnabled: boolean
+    zoomEnabled: boolean,
 };
 
 /**
@@ -128,7 +124,6 @@ type Props = {
  * @extends Component
  */
 class ParticipantView extends Component<Props> {
-
     /**
      * Renders the connection status label, if appropriate.
      *
@@ -141,35 +136,29 @@ class ParticipantView extends Component<Props> {
         let messageKey;
 
         switch (connectionStatus) {
-        case JitsiParticipantConnectionStatus.INACTIVE:
-            messageKey = 'connection.LOW_BANDWIDTH';
-            break;
-        case JitsiParticipantConnectionStatus.INTERRUPTED:
-            messageKey = 'connection.USER_CONNECTION_INTERRUPTED';
-            break;
-        default:
-            return null;
+            case JitsiParticipantConnectionStatus.INACTIVE:
+                messageKey = "connection.LOW_BANDWIDTH";
+                break;
+            case JitsiParticipantConnectionStatus.INTERRUPTED:
+                messageKey = "connection.USER_CONNECTION_INTERRUPTED";
+                break;
+            default:
+                return null;
         }
 
-        const {
-            avatarSize,
-            _participantName: displayName,
-            t
-        } = this.props;
+        const { avatarSize, _participantName: displayName, t } = this.props;
 
         // XXX Consider splitting this component into 2: one for the large view
         // and one for the thumbnail. Some of these don't apply to both.
         const containerStyle = {
             ...styles.connectionInfoContainer,
-            width: avatarSize * 1.5
+            width: avatarSize * 1.5,
         };
 
         return (
-            <View
-                pointerEvents = 'box-none'
-                style = { containerStyle }>
-                <Text style = { styles.connectionInfoText }>
-                    { t(messageKey, { displayName }) }
+            <View pointerEvents="box-none" style={containerStyle}>
+                <Text style={styles.connectionInfoText}>
+                    {t(messageKey, { displayName })}
                 </Text>
             </View>
         );
@@ -187,58 +176,57 @@ class ParticipantView extends Component<Props> {
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
             onPress,
-            tintStyle
+            tintStyle,
         } = this.props;
 
         // If the connection has problems, we will "tint" the video / avatar.
-        const connectionProblem
-            = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
-        const useTint
-            = connectionProblem || this.props.tintEnabled;
+        const connectionProblem =
+            connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
+        const useTint = connectionProblem || this.props.tintEnabled;
 
-        const testHintId
-            = this.props.testHintId
-                ? this.props.testHintId
-                : `org.jitsi.meet.Participant#${this.props.participantId}`;
+        const testHintId = this.props.testHintId
+            ? this.props.testHintId
+            : `org.jitsi.meet.Participant#${this.props.participantId}`;
 
         return (
             <Container
-                onClick = { renderVideo ? undefined : onPress }
-                style = {{
+                onClick={renderVideo ? undefined : onPress}
+                style={{
                     ...styles.participantView,
-                    ...this.props.style
+                    ...this.props.style,
                 }}
-                touchFeedback = { false }>
+                touchFeedback={false}
+            >
+                <TestHint id={testHintId} onPress={onPress} value="" />
 
-                <TestHint
-                    id = { testHintId }
-                    onPress = { onPress }
-                    value = '' />
+                {renderVideo && (
+                    <VideoTrack
+                        onPress={onPress}
+                        videoTrack={videoTrack}
+                        waitForVideoStarted={false}
+                        zOrder={this.props.zOrder}
+                        zoomEnabled={this.props.zoomEnabled}
+                    />
+                )}
 
-                { renderVideo
-                    && <VideoTrack
-                        onPress = { onPress }
-                        videoTrack = { videoTrack }
-                        waitForVideoStarted = { false }
-                        zOrder = { this.props.zOrder }
-                        zoomEnabled = { this.props.zoomEnabled } /> }
-
-                { !renderVideo
-                    && <View style = { styles.avatarContainer }>
+                {!renderVideo && (
+                    <View style={styles.avatarContainer}>
                         <Avatar
-                            participantId = { this.props.participantId }
-                            size = { this.props.avatarSize } />
-                    </View> }
+                            participantId={this.props.participantId}
+                            size={this.props.avatarSize}
+                        />
+                    </View>
+                )}
 
-                { useTint
-
+                {useTint && (
                     // If the connection has problems, tint the video / avatar.
-                    && <TintedView
-                        style = {
-                            connectionProblem ? undefined : tintStyle } /> }
+                    <TintedView
+                        style={connectionProblem ? undefined : tintStyle}
+                    />
+                )}
 
-                { this.props.useConnectivityInfoLabel
-                    && this._renderConnectionInfo(connectionStatus) }
+                {this.props.useConnectivityInfoLabel &&
+                    this._renderConnectionInfo(connectionStatus)}
             </Container>
         );
     }
@@ -261,15 +249,15 @@ function _mapStateToProps(state, ownProps) {
 
     return {
         _connectionStatus:
-            connectionStatus
-                || JitsiParticipantConnectionStatus.ACTIVE,
+            connectionStatus || JitsiParticipantConnectionStatus.ACTIVE,
         _participantName: participantName,
-        _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
-        _videoTrack:
-            getTrackByMediaTypeAndParticipant(
-                state['features/base/tracks'],
-                MEDIA_TYPE.VIDEO,
-                participantId)
+        _renderVideo:
+            shouldRenderParticipantVideo(state, participantId) && !disableVideo,
+        _videoTrack: getTrackByMediaTypeAndParticipant(
+            state["features/base/tracks"],
+            MEDIA_TYPE.VIDEO,
+            participantId
+        ),
     };
 }
 

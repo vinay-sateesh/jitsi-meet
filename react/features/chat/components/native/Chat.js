@@ -14,6 +14,7 @@ import { translate } from "../../../base/i18n";
 import { HeaderWithNavigation, SlidingView } from "../../../base/react";
 import { connect } from "../../../base/redux";
 import { StyleType } from "../../../base/styles";
+import LinearGradient from "react-native-linear-gradient";
 
 import AbstractChat, {
     _mapDispatchToProps,
@@ -93,6 +94,7 @@ class Chat extends AbstractChat<Props> {
             //     show={this.props._isOpen}
             //     transparent
             // >
+
             <KeyboardAvoidingView
                 behavior="padding"
                 style={styles.chatContainer}
@@ -105,6 +107,7 @@ class Chat extends AbstractChat<Props> {
                     onPress={Keyboard.dismiss}
                     // accessible={false}
                 > */}
+
                 <SafeAreaView
                     // onStartShouldSetResponder={() => true}
                     style={{
@@ -119,6 +122,7 @@ class Chat extends AbstractChat<Props> {
                 </SafeAreaView>
                 {/* </TouchableWithoutFeedback> */}
             </KeyboardAvoidingView>
+
             //</SlidingView>
         );
     }

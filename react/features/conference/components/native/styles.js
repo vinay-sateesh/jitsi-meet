@@ -150,11 +150,13 @@ export default {
         paddingBottom: BoxModel.padding,
         position: "absolute",
         right: 0,
+        backgroundColor: "rgba(0,0,0,0.2)",
 
         // Both on Android and iOS there is the status bar which may be visible.
         // On iPhone X there is the notch. In the two cases BoxModel.margin is
         // not enough.
-        top: BoxModel.margin * 3,
+        top: 0,
+        paddingTop: BoxModel.margin * 3,
     },
     chatOverlay: {
         bottom: 0,

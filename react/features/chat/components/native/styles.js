@@ -29,6 +29,7 @@ export default {
         justifyContent: "flex-end",
         flex: 1,
         flexDirection: "column",
+        // backgroundColor: "rgba(0,0,0,0.3)",
     },
     Container: {
         zIndex: OVERLAY_Z_INDEX + 1,
@@ -50,7 +51,7 @@ export default {
      * A special padding to avoid issues on some devices (such as Android devices with custom suggestions bar).
      */
     extraBarPadding: {
-        paddingBottom: 30,
+        // paddingBottom: 30,
     },
 
     inputBar: {
@@ -69,7 +70,6 @@ export default {
         color: "white",
         flex: 1,
         height: 36,
-        maxHeight: 42,
     },
 
     messageBubble: {
@@ -141,7 +141,7 @@ ColorSchemeRegistry.register("Chat", {
      */
     backdrop: {
         // backgroundColor: schemeColor('background'),
-        backgroundColor: "rgba(0,0,0,0.2)",
+        // backgroundColor: "rgba(0,0,0,0.2)",
     },
 
     /**
