@@ -7,6 +7,7 @@ import {
     View,
     TouchableWithoutFeedback,
     Keyboard,
+    ScrollView,
 } from "react-native";
 
 import { ColorSchemeRegistry } from "../../../base/color-scheme";
@@ -95,33 +96,32 @@ class Chat extends AbstractChat<Props> {
             //     transparent
             // >
 
-            <KeyboardAvoidingView
-                behavior="padding"
+            <View
+                // behavior="padding"
                 style={styles.chatContainer}
             >
-                <HeaderWithNavigation
+                {/* <HeaderWithNavigation
                     headerLabelKey="chat.title"
                     onPressBack={this._onClose}
-                />
-                {/* <TouchableWithoutFeedback
-                    onPress={Keyboard.dismiss}
-                    // accessible={false}
-                > */}
-
-                <SafeAreaView
-                    // onStartShouldSetResponder={() => true}
-                    style={{
-                        ..._styles.backdrop,
-                        flex: 1,
-                        // ...flexProp,
-                    }}
+                /> */}
+                <ScrollView
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
                 >
-                    <MessageContainer messages={this.props._messages} />
-                    <MessageRecipient />
-                    {/* <ChatInputBar onSend={this.props._onSendMessage} /> */}
-                </SafeAreaView>
-                {/* </TouchableWithoutFeedback> */}
-            </KeyboardAvoidingView>
+                    <SafeAreaView
+                        // onStartShouldSetResponder={() => true}
+                        style={{
+                            ..._styles.backdrop,
+                            flex: 1,
+                            // ...flexProp,
+                        }}
+                    >
+                        <MessageContainer messages={this.props._messages} />
+                        <MessageRecipient />
+                        {/* <ChatInputBar onSend={this.props._onSendMessage} /> */}
+                    </SafeAreaView>
+                </ScrollView>
+            </View>
 
             //</SlidingView>
         );

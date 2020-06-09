@@ -115,10 +115,8 @@ class Toolbox extends PureComponent<Props> {
         } = _styles;
 
         return (
-            <KeyboardAvoidingView
-                pointerEvents="box-none"
-                style={styles.toolbar}
-            >
+            //was keyboardavoidingview
+            <View pointerEvents="box-none" style={styles.toolbar}>
                 {/* {_chatEnabled && (
                     <ChatButton
                         styles={buttonStylesBorderless}
@@ -150,7 +148,7 @@ class Toolbox extends PureComponent<Props> {
                     styles={buttonStylesBorderless}
                     toggledStyles={toggledButtonStyles}
                 />
-            </KeyboardAvoidingView>
+            </View>
         );
     }
 }

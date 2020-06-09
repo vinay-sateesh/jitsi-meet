@@ -147,7 +147,7 @@ export default {
         flexDirection: "column",
         justifyContent: "flex-end",
         left: 0,
-        paddingBottom: BoxModel.padding,
+        // paddingBottom: BoxModel.padding,
         position: "absolute",
         right: 0,
         backgroundColor: "rgba(0,0,0,0.2)",
@@ -163,7 +163,7 @@ export default {
         // position: "absolute",
 
         // flex: 1,
-        height: "50%",
+        height: "35%",
         width: "100%",
         left: 0,
         right: 0,
