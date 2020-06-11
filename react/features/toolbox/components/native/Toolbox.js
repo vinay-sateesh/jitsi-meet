@@ -7,6 +7,7 @@ import {
     KeyboardAvoidingView,
     Animated,
     Keyboard,
+    Dimensions,
 } from "react-native";
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 import { ColorSchemeRegistry } from "../../../base/color-scheme";
@@ -103,10 +104,18 @@ class Toolbox extends PureComponent<Props, State> {
         this.keyboardWillHideSub.remove();
     }
     keyboardWillShow = (event) => {
+        console.log(
+            Dimensions.get("screen").height,
+            Dimensions.get("window").height
+        );
         Animated.parallel([
             Animated.timing(this.keyboardHeight, {
                 duration: event.duration,
-                toValue: event.endCoordinates.height + BoxModel.padding,
+                toValue:
+                    Dimensions.get("screen").height -
+                    Dimensions.get("window").height +
+                    event.endCoordinates.height +
+                    BoxModel.padding,
             }),
         ]).start();
     };
