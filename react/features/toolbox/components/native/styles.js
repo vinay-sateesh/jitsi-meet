@@ -66,7 +66,7 @@ const styles = {
         justifyContent: "flex-end",
         // marginBottom: BoxModel.margin / 2,
         paddingHorizontal: BoxModel.margin,
-        padding: BoxModel.padding / 2,
+        padding: BoxModel.padding,
     },
 
     /**

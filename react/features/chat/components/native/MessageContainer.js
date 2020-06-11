@@ -1,13 +1,14 @@
 // @flow
 
-import React from 'react';
-import { FlatList } from 'react-native';
+import React from "react";
+import { FlatList } from "react-native";
 
-import AbstractMessageContainer, { type Props }
-    from '../AbstractMessageContainer';
+import AbstractMessageContainer, {
+    type Props,
+} from "../AbstractMessageContainer";
 
-import ChatMessageGroup from './ChatMessageGroup';
-import styles from './styles';
+import ChatMessageGroup from "./ChatMessageGroup";
+import styles from "./styles";
 
 /**
  * Implements a container to render all the chat messages in a conference.
@@ -33,18 +34,19 @@ export default class MessageContainer extends AbstractMessageContainer {
     render() {
         return (
             <FlatList
-                data = { this._getMessagesGroupedBySender() }
-                inverted = { true }
-                keyExtractor = { this._keyExtractor }
-                keyboardShouldPersistTaps = 'always'
-                renderItem = { this._renderMessageGroup }
-                style = { styles.messageContainer } />
+                data={this._getMessagesGroupedBySender()}
+                inverted={true}
+                keyExtractor={this._keyExtractor}
+                keyboardShouldPersistTaps="always"
+                renderItem={this._renderMessageGroup}
+                style={styles.messageContainer}
+            />
         );
     }
 
     _getMessagesGroupedBySender: () => Array<Array<Object>>;
 
-    _keyExtractor: Object => string
+    _keyExtractor: (Object) => string;
 
     /**
      * Key extractor for the flatlist.
@@ -58,7 +60,7 @@ export default class MessageContainer extends AbstractMessageContainer {
         return `key_${index}`;
     }
 
-    _renderMessageGroup: Object => React$Element<*>;
+    _renderMessageGroup: (Object) => React$Element<*>;
 
     /**
      * Renders a single chat message.
@@ -67,6 +69,6 @@ export default class MessageContainer extends AbstractMessageContainer {
      * @returns {React$Element<*>}
      */
     _renderMessageGroup({ item: messages }) {
-        return <ChatMessageGroup messages = { messages } />;
+        return <ChatMessageGroup messages={messages} />;
     }
 }

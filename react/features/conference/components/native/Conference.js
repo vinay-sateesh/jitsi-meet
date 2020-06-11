@@ -8,6 +8,7 @@ import {
     TouchableWithoutFeedback,
     View,
     Keyboard,
+    TextInput,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 
@@ -344,18 +345,6 @@ class Conference extends AbstractConference<Props, *> {
                         />
                     )}
 
-                    {
-                        /*
-                         * The Filmstrip is in a stacking layer above the
-                         * LargeVideo. The LargeVideo and the Filmstrip form what
-                         * the Web/React app calls "videospace". Presumably, the
-                         * name and grouping stem from the fact that these two
-                         * React Components depict the videos of the conference's
-                         * participants.
-                         */
-                        _shouldDisplayTileView ? undefined : <Filmstrip />
-                    }
-
                     <View
                         style={{
                             ...styles.chatOverlay,
@@ -364,11 +353,29 @@ class Conference extends AbstractConference<Props, *> {
                         }}
                     >
                         <Chat />
+                        <View
+                            style={{
+                                justifyContent: "flex-end",
+                            }}
+                        >
+                            {
+                                /*
+                                 * The Filmstrip is in a stacking layer above the
+                                 * LargeVideo. The LargeVideo and the Filmstrip form what
+                                 * the Web/React app calls "videospace". Presumably, the
+                                 * name and grouping stem from the fact that these two
+                                 * React Components depict the videos of the conference's
+                                 * participants.
+                                 */
+                                _shouldDisplayTileView ? undefined : (
+                                    <Filmstrip />
+                                )
+                            }
+                        </View>
                     </View>
                     {/*
                      * The Toolbox is in a stacking layer below the Filmstrip.
                      */}
-                    <Toolbox />
                 </SafeAreaView>
 
                 <SafeAreaView

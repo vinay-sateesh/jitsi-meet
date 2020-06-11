@@ -6,6 +6,7 @@ import {
     Dimensions,
     TouchableWithoutFeedback,
     View,
+    Keyboard,
 } from "react-native";
 
 import { BackButtonRegistry } from "../../../../mobile/back-button";
@@ -45,6 +46,10 @@ type Props = {
      */
     style: StyleType,
     transparent: boolean,
+    /**
+     * make sliding view not dismissable - used for chat
+     */
+    dontHide: boolean,
 };
 
 /**
@@ -258,11 +263,12 @@ export default class SlidingView extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onHide() {
-        this._setShow(false).then(() => {
-            const { onHide } = this.props;
-
-            onHide && onHide();
-        });
+        if (!this.props.dontHide) {
+            this._setShow(false).then(() => {
+                const { onHide } = this.props;
+                onHide && onHide();
+            });
+        }
     }
 
     _setShow: (boolean) => Promise<*>;

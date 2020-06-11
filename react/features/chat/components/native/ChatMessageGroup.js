@@ -39,8 +39,9 @@ export default class ChatMessageGroup extends Component<Props> {
     render() {
         return (
             <FlatList
+                keyboardShouldPersistTaps={"handled"}
+                inverted
                 data={this.props.messages}
-                inverted={true}
                 keyExtractor={this._keyExtractor}
                 renderItem={this._renderMessage}
                 style={styles.messageContainer}

@@ -161,10 +161,10 @@ export default {
     chatOverlay: {
         bottom: 0,
         // position: "absolute",
-
+        flexDirection: "row",
         // flex: 1,
-        height: "35%",
-        width: "100%",
+
+        flex: 1,
         left: 0,
         right: 0,
     },

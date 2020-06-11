@@ -27,6 +27,7 @@ import ChatInputBar from "./ChatInputBar";
 import MessageContainer from "./MessageContainer";
 import MessageRecipient from "./MessageRecipient";
 import styles from "./styles";
+import { Toolbox } from "../../../toolbox";
 
 type Props = AbstractProps & {
     /**
@@ -87,43 +88,41 @@ class Chat extends AbstractChat<Props> {
     render() {
         const { _styles } = this.props;
         // this.props._AlwaysOpenChat();
-        const flexProp = this.state.keyboardUp ? { flex: 1 } : { flex: 1 };
+        const flexProp = this.state.keyboardUp ? { flex: 0 } : { flex: 1.3 };
         return (
-            // <SlidingView
-            //     onHide={this._onClose}
-            //     position="bottom"
-            //     show={this.props._isOpen}
-            //     transparent
-            // >
-
-            <View
-                // behavior="padding"
-                style={styles.chatContainer}
+            <SlidingView
+                onHide={this._onClose}
+                position="bottom"
+                show={true}
+                transparent
+                dontHide
             >
-                {/* <HeaderWithNavigation
-                    headerLabelKey="chat.title"
-                    onPressBack={this._onClose}
-                /> */}
-                <ScrollView
-                    contentContainerStyle={{ flexGrow: 1 }}
-                    keyboardShouldPersistTaps="handled"
+                <View
+                    // behavior="padding"
+                    style={styles.chatContainer}
                 >
+                    <HeaderWithNavigation
+                        headerLabelKey="chat.title"
+                        onPressBack={this._onClose}
+                    />
+
                     <SafeAreaView
-                        // onStartShouldSetResponder={() => true}
+                        onStartShouldSetResponder={() => true}
                         style={{
                             ..._styles.backdrop,
                             flex: 1,
                             // ...flexProp,
                         }}
                     >
+                        <View style={{ ...flexProp }}></View>
                         <MessageContainer messages={this.props._messages} />
+
                         <MessageRecipient />
                         {/* <ChatInputBar onSend={this.props._onSendMessage} /> */}
                     </SafeAreaView>
-                </ScrollView>
-            </View>
-
-            //</SlidingView>
+                </View>
+                <Toolbox />
+            </SlidingView>
         );
     }
 
@@ -135,13 +134,14 @@ class Chat extends AbstractChat<Props> {
      * @returns {boolean}
      */
     _onClose() {
-        if (this.props._isOpen) {
-            this.props._onToggleChat();
+        // if (this.props._isOpen) {
+        //     this.props._onToggleChat();
 
-            return true;
-        }
+        //     return true;
+        // }
 
-        return false;
+        // return false;
+        return true;
     }
 }
 

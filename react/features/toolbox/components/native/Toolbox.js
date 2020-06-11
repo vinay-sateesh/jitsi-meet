@@ -5,13 +5,15 @@ import {
     View,
     TouchableWithoutFeedback,
     KeyboardAvoidingView,
+    Animated,
+    Keyboard,
 } from "react-native";
-
+import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 import { ColorSchemeRegistry } from "../../../base/color-scheme";
 import { CHAT_ENABLED, getFeatureFlag } from "../../../base/flags";
 import { Container } from "../../../base/react";
 import { connect } from "../../../base/redux";
-import { StyleType } from "../../../base/styles";
+import { StyleType, BoxModel } from "../../../base/styles";
 import { ChatButton } from "../../../chat";
 import { InfoDialogButton } from "../../../invite";
 
@@ -53,18 +55,88 @@ type Props = {
      * The redux {@code dispatch} function.
      */
     dispatch: Dispatch<any>,
-};
 
+    keyboardWillShowSub: Function,
+    keyboardWillHideSub: Function,
+};
+type State = {
+    kHeight: number,
+};
 /**
  * Implements the conference toolbox on React Native.
  */
-class Toolbox extends PureComponent<Props> {
+class Toolbox extends PureComponent<Props, State> {
+    setKeyboardHeight: Function;
+    keyboardHeight: AnimatedValue;
+    state = {
+        kHeight: BoxModel.padding,
+    };
+    // componentDidMount = () => {
+    //     this.setState({ keyboardHeight: new Animated.Value(BoxModel.padding) });
+    // };
+    keyboardWillShowSub: Function;
+    keyboardWillHideSub: Function;
+    constructor(props: Props) {
+        super(props);
+        this.keyboardHeight = new Animated.Value(BoxModel.padding);
+    }
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement}
      */
+
+    componentWillMount() {
+        this.keyboardWillShowSub = Keyboard.addListener(
+            "keyboardDidShow",
+            this.keyboardWillShow.bind(this)
+        );
+        this.keyboardWillHideSub = Keyboard.addListener(
+            "keyboardDidHide",
+            this.keyboardWillHide.bind(this)
+        );
+    }
+
+    componentWillUnmount() {
+        this.keyboardWillShowSub.remove();
+        this.keyboardWillHideSub.remove();
+    }
+    keyboardWillShow = (event) => {
+        Animated.parallel([
+            Animated.timing(this.keyboardHeight, {
+                duration: event.duration,
+                toValue: event.endCoordinates.height + BoxModel.padding,
+            }),
+        ]).start();
+    };
+
+    keyboardWillHide = (event) => {
+        Animated.parallel([
+            Animated.timing(this.keyboardHeight, {
+                duration: event.duration,
+                toValue: BoxModel.padding,
+            }),
+        ]).start();
+    };
+    // setKeyboardHeight = (toggle) => {
+    //     if (toggle) {
+    //         Animated.parallel([
+    //             Animated.timing(this.state.keyboardHeight, {
+    //                 duration: 2,
+    //                 toValue: 300,
+    //             }),
+    //         ]).start();
+    //     } else
+    //         Animated.parallel([
+    //             Animated.timing(this.state.keyboardHeight, {
+    //                 duration: 2,
+    //                 toValue: BoxModel.padding,
+    //             }),
+    //         ]).start();
+    //     console.log(toggle, this.state.keyboardHeight);
+    // };
+
     render() {
         return (
             <Container style={styles.toolbox} visible={this.props._visible}>
@@ -115,8 +187,13 @@ class Toolbox extends PureComponent<Props> {
         } = _styles;
 
         return (
-            //was keyboardavoidingview
-            <View pointerEvents="box-none" style={styles.toolbar}>
+            <Animated.View
+                pointerEvents="box-none"
+                style={{
+                    ...styles.toolbar,
+                    paddingBottom: this.keyboardHeight,
+                }}
+            >
                 {/* {_chatEnabled && (
                     <ChatButton
                         styles={buttonStylesBorderless}
@@ -126,7 +203,11 @@ class Toolbox extends PureComponent<Props> {
                     />
                 )} */}
 
-                <ChatInputBar onSend={this.props._onSendMessage} />
+                <ChatInputBar
+                    // onFocus={() => this.setKeyboardHeight(true)}
+                    // onBlur={() => this.setKeyboardHeight(false)}
+                    onSend={this.props._onSendMessage}
+                />
 
                 {!_chatEnabled && (
                     <InfoDialogButton
@@ -148,7 +229,7 @@ class Toolbox extends PureComponent<Props> {
                     styles={buttonStylesBorderless}
                     toggledStyles={toggledButtonStyles}
                 />
-            </View>
+            </Animated.View>
         );
     }
 }
