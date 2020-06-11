@@ -357,21 +357,7 @@ class Conference extends AbstractConference<Props, *> {
                             style={{
                                 justifyContent: "flex-end",
                             }}
-                        >
-                            {
-                                /*
-                                 * The Filmstrip is in a stacking layer above the
-                                 * LargeVideo. The LargeVideo and the Filmstrip form what
-                                 * the Web/React app calls "videospace". Presumably, the
-                                 * name and grouping stem from the fact that these two
-                                 * React Components depict the videos of the conference's
-                                 * participants.
-                                 */
-                                _shouldDisplayTileView ? undefined : (
-                                    <Filmstrip />
-                                )
-                            }
-                        </View>
+                        ></View>
                     </View>
                     {/*
                      * The Toolbox is in a stacking layer below the Filmstrip.

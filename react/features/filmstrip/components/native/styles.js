@@ -22,7 +22,7 @@ export default {
         flexDirection: "row",
         flexGrow: 0,
         justifyContent: "flex-end",
-        height: FILMSTRIP_SIZE,
+        // height: FILMSTRIP_SIZE,
     },
 
     /**

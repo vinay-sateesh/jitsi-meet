@@ -1,26 +1,25 @@
 // @flow
 
-import React, { Component } from 'react';
-import { ScrollView } from 'react-native';
+import React, { Component } from "react";
+import { ScrollView } from "react-native";
 
-import { Container, Platform } from '../../../base/react';
-import { connect } from '../../../base/redux';
+import { Container, Platform } from "../../../base/react";
+import { connect } from "../../../base/redux";
 import {
     isNarrowAspectRatio,
-    makeAspectRatioAware
-} from '../../../base/responsive-ui';
+    makeAspectRatioAware,
+} from "../../../base/responsive-ui";
 
-import { isFilmstripVisible } from '../../functions';
+import { isFilmstripVisible } from "../../functions";
 
-import LocalThumbnail from './LocalThumbnail';
-import styles from './styles';
-import Thumbnail from './Thumbnail';
+import LocalThumbnail from "./LocalThumbnail";
+import styles from "./styles";
+import Thumbnail from "./Thumbnail";
 
 /**
  * Filmstrip component's property types.
  */
 type Props = {
-
     /**
      * The indicator which determines whether the filmstrip is enabled.
      *
@@ -40,7 +39,7 @@ type Props = {
      *
      * @private
      */
-    _visible: boolean
+    _visible: boolean,
 };
 
 /**
@@ -81,7 +80,7 @@ class Filmstrip extends Component<Props> {
         // indicators such as moderator, audio and video muted, etc. For now we
         // do not have much of a choice but to continue rendering LocalThumbnail
         // as any other remote Thumbnail on Android.
-        this._separateLocalThumbnail = Platform.OS !== 'android';
+        this._separateLocalThumbnail = Platform.OS !== "android";
     }
 
     /**
@@ -96,52 +95,38 @@ class Filmstrip extends Component<Props> {
         }
 
         const isNarrowAspectRatio_ = isNarrowAspectRatio(this);
-        const filmstripStyle
-            = isNarrowAspectRatio_
-                ? styles.filmstripNarrow
-                : styles.filmstripWide;
+        const filmstripStyle = isNarrowAspectRatio_
+            ? styles.filmstripNarrow
+            : styles.filmstripWide;
 
         return (
-            <Container
-                style = { filmstripStyle }
-                visible = { this.props._visible }>
-                {
-                    this._separateLocalThumbnail
-                        && !isNarrowAspectRatio_
-                        && <LocalThumbnail />
-                }
+            <Container style={filmstripStyle} visible={this.props._visible}>
+                {this._separateLocalThumbnail && !isNarrowAspectRatio_ && (
+                    <LocalThumbnail />
+                )}
                 <ScrollView
-                    horizontal = { isNarrowAspectRatio_ }
-                    showsHorizontalScrollIndicator = { false }
-                    showsVerticalScrollIndicator = { false }
-                    style = { styles.scrollView } >
-                    {
-                        !this._separateLocalThumbnail
-                            && !isNarrowAspectRatio_
-                            && <LocalThumbnail />
-                    }
-                    {
+                    // horizontal = { isNarrowAspectRatio_ }
 
-                        this._sort(
-                                this.props._participants,
-                                isNarrowAspectRatio_)
-                            .map(p => (
-                                <Thumbnail
-                                    key = { p.id }
-                                    participant = { p } />))
-
-                    }
-                    {
-                        !this._separateLocalThumbnail
-                            && isNarrowAspectRatio_
-                            && <LocalThumbnail />
-                    }
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                    style={styles.scrollView}
+                >
+                    {!this._separateLocalThumbnail && !isNarrowAspectRatio_ && (
+                        <LocalThumbnail />
+                    )}
+                    {this._sort(
+                        this.props._participants,
+                        isNarrowAspectRatio_
+                    ).map((p) => (
+                        <Thumbnail key={p.id} participant={p} />
+                    ))}
+                    {!this._separateLocalThumbnail && isNarrowAspectRatio_ && (
+                        <LocalThumbnail />
+                    )}
                 </ScrollView>
-                {
-                    this._separateLocalThumbnail
-                        && isNarrowAspectRatio_
-                        && <LocalThumbnail />
-                }
+                {this._separateLocalThumbnail && isNarrowAspectRatio_ && (
+                    <LocalThumbnail />
+                )}
             </Container>
         );
     }
@@ -161,9 +146,7 @@ class Filmstrip extends Component<Props> {
         // XXX Array.prototype.sort() is not appropriate because (1) it operates
         // in place and (2) it is not necessarily stable.
 
-        const sortedParticipants = [
-            ...participants
-        ];
+        const sortedParticipants = [...participants];
 
         if (isNarrowAspectRatio_) {
             // When the narrow aspect ratio is used, we want to have the remote
@@ -187,8 +170,8 @@ class Filmstrip extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state) {
-    const participants = state['features/base/participants'];
-    const { enabled } = state['features/filmstrip'];
+    const participants = state["features/base/participants"];
+    const { enabled } = state["features/filmstrip"];
 
     return {
         /**
@@ -205,7 +188,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {Participant[]}
          */
-        _participants: participants.filter(p => !p.local),
+        _participants: participants.filter((p) => !p.local),
 
         /**
          * The indicator which determines whether the filmstrip is visible. The
@@ -215,7 +198,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _visible: isFilmstripVisible(state)
+        _visible: isFilmstripVisible(state),
     };
 }
 

@@ -9,7 +9,8 @@ import {
     Keyboard,
     ScrollView,
 } from "react-native";
-
+import { shouldDisplayTileView } from "../../../video-layout";
+import { Filmstrip } from "../../../filmstrip";
 import { ColorSchemeRegistry } from "../../../base/color-scheme";
 import { translate } from "../../../base/i18n";
 import { HeaderWithNavigation, SlidingView } from "../../../base/react";
@@ -99,26 +100,51 @@ class Chat extends AbstractChat<Props> {
             >
                 <View
                     // behavior="padding"
+
                     style={styles.chatContainer}
                 >
-                    <HeaderWithNavigation
+                    {/* <HeaderWithNavigation
                         headerLabelKey="chat.title"
                         onPressBack={this._onClose}
-                    />
+                    /> */}
 
                     <SafeAreaView
                         onStartShouldSetResponder={() => true}
                         style={{
                             ..._styles.backdrop,
                             flex: 1,
+                            flexDirection: "row",
+                            alignItems: "flex-end",
                             // ...flexProp,
                         }}
                     >
-                        <View style={{ ...flexProp }}></View>
-                        <MessageContainer messages={this.props._messages} />
+                        <View
+                            style={{
+                                flex: 1,
+                                height: "50%",
+                            }}
+                        >
+                            <MessageContainer messages={this.props._messages} />
 
-                        <MessageRecipient />
+                            <MessageRecipient />
+                        </View>
                         {/* <ChatInputBar onSend={this.props._onSendMessage} /> */}
+                        <View style={{ justifyContent: "flex-end" }}>
+                            {
+                                /*
+                                 * The Filmstrip is in a stacking layer above the
+                                 * LargeVideo. The LargeVideo and the Filmstrip form what
+                                 * the Web/React app calls "videospace". Presumably, the
+                                 * name and grouping stem from the fact that these two
+                                 * React Components depict the videos of the conference's
+                                 * participants.
+                                 */
+                                this.props
+                                    ._shouldDisplayTileView ? undefined : (
+                                    <Filmstrip />
+                                )
+                            }
+                        </View>
                     </SafeAreaView>
                 </View>
                 <Toolbox />
@@ -155,6 +181,7 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         _styles: ColorSchemeRegistry.get(state, "Chat"),
+        _shouldDisplayTileView: shouldDisplayTileView(state),
     };
 }
 

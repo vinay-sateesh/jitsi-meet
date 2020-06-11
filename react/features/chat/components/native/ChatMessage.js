@@ -71,7 +71,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
         }
 
         return (
-            <View style={styles.messageWrapper}>
+            <View pointerEvents="box-none" style={styles.messageWrapper}>
                 {this._renderAvatar()}
                 <View style={detailsWrapperStyle}>
                     <View style={messageBubbleStyle}>
