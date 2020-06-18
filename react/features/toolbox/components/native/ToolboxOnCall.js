@@ -1,7 +1,5 @@
 // @flow
-import { AUDIO_MUTE, createToolbarEvent, sendAnalytics, VIDEO_MUTE } from '../../../analytics';
-import { setAudioMuted, setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../../../base/media';
-import { setAudioOnly } from '../../../base/audio-only';
+
 import React, { PureComponent } from 'react';
 import {
     View,
@@ -29,9 +27,7 @@ import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
 import VideoMuteButton from '../VideoMuteButton';
 import ChatInputBar from '../../../chat/components/native/ChatInputBar';
-import UIEvents from '../../../../../service/UI/UIEvents';
 
-declare var APP: Object;
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
  */
@@ -59,12 +55,10 @@ type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function,
+    dispatch: Dispatch<any>,
+
     keyboardWillShowSub: Function,
     keyboardWillHideSub: Function,
-    _setAudioMuted: Function,
-    _setVideoMuted: Function,
-    _audioOnly: boolean,
 };
 type State = {
     kHeight: number,
@@ -95,12 +89,6 @@ class Toolbox extends PureComponent<Props, State> {
      */
 
     componentDidMount() {
-        /**
-         * Muted audio and video until the host accepts your call
-         * if you ever call that is
-         */
-        this.props._setAudioMuted(true);
-        this.props._setVideoMuted(true);
         this.keyboardWillShowSub = Keyboard.addListener(
             'keyboardDidShow',
             this.keyboardWillShow.bind(this)
@@ -266,17 +254,14 @@ class Toolbox extends PureComponent<Props, State> {
  */
 function _mapStateToProps(state: Object): Object {
     // console.log(state['features/base/participants'][0].id);
-    const { enabled: audioOnly } = state['features/base/audio-only'];
-
     return {
-        _audioOnly: Boolean(audioOnly),
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
     };
 }
 
-function _mapDispatchToProps(dispatch: Dispatch<any>, ownProps: Props) {
+function _mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
         /**
          * Sends a text message.
@@ -288,44 +273,6 @@ function _mapDispatchToProps(dispatch: Dispatch<any>, ownProps: Props) {
          */
         _onSendMessage(text: string) {
             dispatch(sendMessage(text));
-        },
-        /**
-         * Participants will have audio and video muted unless the host accepts a call with them
-         * The below function changes the muted state
-         *
-         * @param {boolean} audioMuted - Whether audio should be muted or not.
-         * @protected
-         * @returns {void}
-         */
-        _setAudioMuted(audioMuted: boolean) {
-            sendAnalytics(createToolbarEvent(AUDIO_MUTE, { enable: audioMuted }));
-            dispatch(setAudioMuted(audioMuted, /* ensureTrack */ true));
-
-            // FIXME: The old conference logic as well as the shared video feature
-            // still rely on this event being emitted.
-            typeof APP === 'undefined' || APP.UI.emitEvent(UIEvents.AUDIO_MUTED, audioMuted, true);
-        },
-        /**
-         * Changes the muted state.
-         *
-         * @override
-         * @param {boolean} videoMuted - Whether video should be muted or not.
-         * @protected
-         * @returns {void}
-         */
-        _setVideoMuted(videoMuted: boolean) {
-            sendAnalytics(createToolbarEvent(VIDEO_MUTE, { enable: videoMuted }));
-            if (ownProps._audioOnly) {
-                dispatch(setAudioOnly(false, /* ensureTrack */ true));
-            }
-
-            dispatch(
-                setVideoMuted(videoMuted, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true)
-            );
-
-            // FIXME: The old conference logic still relies on this event being
-            // emitted.
-            typeof APP === 'undefined' || APP.UI.emitEvent(UIEvents.VIDEO_MUTED, videoMuted, true);
         },
     };
 }

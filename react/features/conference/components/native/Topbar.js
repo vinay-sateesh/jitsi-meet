@@ -3,12 +3,12 @@
 import React, { Component } from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-
+import ParticipantCount from './ParticipantCount';
 import { getConferenceName } from '../../../base/conference';
 import { connect } from '../../../base/redux';
 import { PictureInPictureButton, SmallEndCallButton } from '../../../mobile/picture-in-picture';
+
 import { isToolboxVisible, isTopNavigationVisible } from '../../../toolbox';
-import DesktopSharingButton from '../../../toolbox/components/native/DesktopSharingButton';
 
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
@@ -19,47 +19,45 @@ type Props = {
     _meetingName: string,
     _bottomSheetStyles: StyleType,
 
-    /**
-     * True if the navigation bar should be visible.
-     */
-    _visible: boolean,
     _hostName: string,
+    NumberOfParticipants: number,
 };
 
 /**
  * Implements a navigation bar component that is rendered on top of the
  * conference screen.
  */
-class NavigationBar extends Component<Props> {
+class Topbar extends Component<Props> {
+    /**
+     * Hides this {@code OverflowMenu}.
+     *
+     * @private
+     * @returns {boolean}
+     */
+    _onCancel() {
+        if (this.props._isOpen) {
+            this.props.dispatch(hideDialog(OverflowMenu_));
+
+            return true;
+        }
+
+        return false;
+    }
     /**
      * Implements {@Component#render}.
      *
      * @inheritdoc
      */
     render() {
-        if (!this.props._visible) {
-            return null;
-        }
         const buttonProps = {
-            afterClick: this._onCancel,
             showLabel: true,
         };
 
         return [
-            <LinearGradient
-                colors={NAVBAR_GRADIENT_COLORS}
-                key={1}
-                pointerEvents="none"
-                style={styles.gradient}
-            >
-                <SafeAreaView>
-                    <View style={styles.gradientStretchTop} />
-                </SafeAreaView>
-            </LinearGradient>,
-            <View key={2} pointerEvents="box-none" style={styles.navBarWrapper}>
-                <PictureInPictureButton styles={{ ...styles.navBarButton, flex: 1 }} />
+            <View key={1} pointerEvents="box-none" style={styles.navBarWrapper}>
+                {/* <PictureInPictureButton styles={{ ...styles.navBarButton, flex: 1 }} /> */}
 
-                <View pointerEvents="box-none" style={styles.roomNameWrapper}>
+                {/* <View pointerEvents="box-none" style={styles.roomNameWrapper}>
                     <Text
                         numberOfLines={2}
                         style={{
@@ -68,19 +66,25 @@ class NavigationBar extends Component<Props> {
                             marginTop: 8,
                         }}
                     >
-                        {'Product'}
-                        {'\n'}
-                        {this.props._hostName}
-                        {"'s "}
-                        {'room: '}
                         {this.props._meetingName}
                     </Text>
+                </View> */}
+                <View style={{ justifyContent: 'flex-end', flex: 1, flexDirection: 'row' }}>
+                    <View
+                        style={{
+                            flex: 1,
+                            alignItems: 'flex-end',
+                            justifyContent: 'center',
+                            marginHorizontal: 8,
+                        }}
+                    >
+                        <ParticipantCount count={this.props.NumberOfParticipants} />
+                    </View>
+                    <SmallEndCallButton
+                        styles={{ ...styles.customNavBarButton, flex: 1 }}
+                        {...buttonProps}
+                    />
                 </View>
-
-                <SmallEndCallButton
-                    styles={{ ...styles.customNavBarButton, flex: 1 }}
-                    {...buttonProps}
-                />
             </View>,
         ];
     }
@@ -103,4 +107,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(NavigationBar);
+export default connect(_mapStateToProps)(Topbar);

@@ -1,12 +1,8 @@
-import {
-    BoxModel,
-    ColorPalette,
-    fixAndroidViewClipping,
-} from "../../../base/styles";
+import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/styles';
 
-import { FILMSTRIP_SIZE } from "../../../filmstrip";
+import { FILMSTRIP_SIZE } from '../../../filmstrip';
 
-export const NAVBAR_GRADIENT_COLORS = ["#00000080", "#00000000"];
+export const NAVBAR_GRADIENT_COLORS = ['#00000080', '#00000000'];
 
 // From brand guideline
 const BOTTOM_GRADIENT_HEIGHT = 0; //290
@@ -18,12 +14,12 @@ const DEFAULT_GRADIENT_SIZE = 80; //140
 export default {
     bottomGradient: {
         bottom: 0,
-        flexDirection: "column",
-        justifyContent: "flex-end",
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
         // minHeight: DEFAULT_GRADIENT_SIZE,
         minHeight: 80,
         left: 0,
-        position: "absolute",
+        position: 'absolute',
         right: 0,
     },
 
@@ -31,13 +27,13 @@ export default {
      * {@code Conference} style.
      */
     conference: fixAndroidViewClipping({
-        alignSelf: "stretch",
+        alignSelf: 'stretch',
         backgroundColor: ColorPalette.appBackground,
         flex: 1,
     }),
 
     gradient: {
-        position: "absolute",
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
@@ -57,8 +53,8 @@ export default {
      */
     indicatorContainer: {
         flex: 1,
-        flexDirection: "row",
-        justifyContent: "flex-end",
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
         margin: BoxModel.margin,
     },
 
@@ -70,8 +66,8 @@ export default {
     },
 
     labelWrapper: {
-        flexDirection: "column",
-        position: "absolute",
+        flexDirection: 'column',
+        position: 'absolute',
         right: 0,
         top: 0,
     },
@@ -82,58 +78,60 @@ export default {
             fontSize: 24,
         },
 
-        underlayColor: "transparent",
+        underlayColor: 'transparent',
     },
     customNavBarButton: {
-        iconStyle: { color: "white", fontSize: 0 },
+        iconStyle: { color: 'white', fontSize: 0 },
         labelStyle: {
-            color: "red",
+            color: 'red',
             flexShrink: 1,
             fontSize: 18,
-            marginLeft: 8,
+            // marginLeft: 8,
             opacity: 0.9,
         },
-        sheet: { backgroundColor: "rgb(255, 255, 255)" },
-        style: { alignItems: "center", flexDirection: "row", height: 48 },
-        underlayColor: "black",
+        sheet: { backgroundColor: 'rgb(255, 255, 255)' },
+        style: { alignItems: 'center', flexDirection: 'row', height: 48 },
+        underlayColor: 'transparent',
     },
 
     navBarContainer: {
-        flexDirection: "column",
+        flexDirection: 'column',
         left: 0,
-        position: "absolute",
+        position: 'absolute',
         right: 0,
         top: 0,
     },
 
     navBarSafeView: {
         left: 0,
-        position: "absolute",
+        position: 'absolute',
         right: 0,
         top: 0,
     },
 
     navBarWrapper: {
-        alignItems: "center",
+        alignItems: 'center',
         flex: 1,
-        flexDirection: "row",
+        flexDirection: 'row',
         height: 44,
-        justifyContent: "space-between",
+        // justifyContent: 'space-between',
         paddingHorizontal: 14,
     },
 
     roomName: {
         color: ColorPalette.white,
         fontSize: 17,
-        fontWeight: "400",
+        fontWeight: '400',
     },
 
     roomNameWrapper: {
-        flexDirection: "row",
-        justifyContent: "center",
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+
         left: 0,
         paddingHorizontal: 48,
-        position: "absolute",
+        position: 'absolute',
         right: 0,
     },
 
@@ -144,13 +142,13 @@ export default {
      */
     toolboxAndFilmstripContainer: {
         bottom: 0,
-        flexDirection: "column",
-        justifyContent: "flex-end",
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
         left: 0,
         // paddingBottom: BoxModel.padding,
-        position: "absolute",
+        position: 'absolute',
         right: 0,
-        backgroundColor: "rgba(0,0,0,0.2)",
+        backgroundColor: 'rgba(0,0,0,0.2)',
 
         // Both on Android and iOS there is the status bar which may be visible.
         // On iPhone X there is the notch. In the two cases BoxModel.margin is
@@ -161,7 +159,7 @@ export default {
     chatOverlay: {
         bottom: 0,
         // position: "absolute",
-        flexDirection: "row",
+        flexDirection: 'row',
         // flex: 1,
 
         flex: 1,

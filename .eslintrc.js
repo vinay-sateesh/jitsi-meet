@@ -1,5 +1,5 @@
 module.exports = {
-    'extends': [
-        'eslint-config-jitsi'
-    ]
+    'plugins': ["prettier"],
+    'rules': { "prettier/prettier": "error" },
+    'extends': ["eslint-config-jitsi", "plugin:prettier/recommended"],
 };

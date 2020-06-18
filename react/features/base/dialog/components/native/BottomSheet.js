@@ -14,7 +14,6 @@ import { bottomSheetStyles as styles } from './styles';
  * The type of {@code BottomSheet}'s React {@code Component} prop types.
  */
 type Props = {
-
     /**
      * The color-schemed stylesheet of the feature.
      */
@@ -29,7 +28,7 @@ type Props = {
      * Handler for the cancel event, which happens when the user dismisses
      * the sheet.
      */
-    onCancel: ?Function
+    onCancel: ?Function,
 };
 
 /**
@@ -46,22 +45,11 @@ class BottomSheet extends PureComponent<Props> {
         const { _styles } = this.props;
 
         return (
-            <SlidingView
-                onHide = { this.props.onCancel }
-                position = 'bottom'
-                show = { true }>
-                <View
-                    pointerEvents = 'box-none'
-                    style = { styles.sheetContainer }>
-                    <View
-                        pointerEvents = 'box-none'
-                        style = { styles.sheetAreaCover } />
-                    <View
-                        style = { [
-                            styles.sheetItemContainer,
-                            _styles.sheet
-                        ] }>
-                        { this._getWrappedContent() }
+            <SlidingView onHide={this.props.onCancel} position="bottom" show={true}>
+                <View pointerEvents="box-none" style={styles.sheetContainer}>
+                    <View pointerEvents="box-none" style={styles.sheetAreaCover} />
+                    <View style={[styles.sheetItemContainer, _styles.sheet]}>
+                        {this._getWrappedContent()}
                     </View>
                 </View>
             </SlidingView>
@@ -75,10 +63,8 @@ class BottomSheet extends PureComponent<Props> {
      */
     _getWrappedContent() {
         const content = (
-            <ScrollView
-                bounces = { false }
-                showsVerticalScrollIndicator = { false } >
-                { this.props.children }
+            <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
+                {this.props.children}
             </ScrollView>
         );
 
@@ -86,11 +72,7 @@ class BottomSheet extends PureComponent<Props> {
             const majorVersionIOS = parseInt(Platform.Version, 10);
 
             if (majorVersionIOS > 10) {
-                return (
-                    <SafeAreaView>
-                        { content }
-                    </SafeAreaView>
-                );
+                return <SafeAreaView>{content}</SafeAreaView>;
             }
         }
 
@@ -108,7 +90,7 @@ class BottomSheet extends PureComponent<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _styles: ColorSchemeRegistry.get(state, 'BottomSheet')
+        _styles: ColorSchemeRegistry.get(state, 'BottomSheet'),
     };
 }
 

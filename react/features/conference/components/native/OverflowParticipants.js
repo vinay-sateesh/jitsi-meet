@@ -1,8 +1,8 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Platform } from 'react-native';
-
+import { Platform, Text, View } from 'react-native';
+import { getParticipants } from '../../../base/participants';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
 import { CHAT_ENABLED, IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
@@ -15,12 +15,7 @@ import { LiveStreamButton, RecordButton } from '../../../recording';
 import { RoomLockButton } from '../../../room-lock';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
-
-import AudioOnlyButton from './AudioOnlyButton';
-import HelpButton from '../HelpButton';
-import RaiseHandButton from './RaiseHandButton';
-import ToggleCameraButton from './ToggleCameraButton';
-import DesktopSharingButton from './DesktopSharingButton';
+import RenderParticipant from './renderParticipant';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -50,6 +45,10 @@ type Props = {
      * Used for hiding the dialog when the selection was completed.
      */
     dispatch: Function,
+    /**
+     * Array of participant objects to display
+     */
+    participants: Array,
 };
 
 /**
@@ -95,20 +94,12 @@ class OverflowMenu extends Component<Props> {
 
         return (
             <BottomSheet onCancel={this._onCancel}>
-                <AudioRouteButton {...buttonProps} />
-                <ToggleCameraButton {...buttonProps} />
-                <AudioOnlyButton {...buttonProps} />
-                <RoomLockButton {...buttonProps} />
-                <ClosedCaptionButton {...buttonProps} />
-                {this.props._recordingEnabled && <RecordButton {...buttonProps} />}
-                <LiveStreamButton {...buttonProps} />
-                <TileViewButton {...buttonProps} />
-                <InviteButton {...buttonProps} />
-                {this.props._chatEnabled && <InfoDialogButton {...buttonProps} />}
-                <RaiseHandButton {...buttonProps} />
-                <SharedDocumentButton {...buttonProps} />
-                <HelpButton {...buttonProps} />
-                {this.props._desktopSharingEnabled && <DesktopSharingButton {...buttonProps} />}
+                <View style={{ marginVertical: 8 }}></View>
+                <Text style={{ fontSize: 18, marginBottom: 4 }}>Participants</Text>
+                {this.props.participants.map((participant) => (
+                    <RenderParticipant participant={participant} />
+                ))}
+                <View style={{ marginVertical: 8 }}></View>
             </BottomSheet>
         );
     }
@@ -151,6 +142,7 @@ function _mapStateToProps(state) {
     }
 
     return {
+        participants: getParticipants(state),
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _isOpen: isDialogOpen(state, OverflowMenu_),

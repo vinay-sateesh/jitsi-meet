@@ -1,6 +1,11 @@
 // @flow
-
-import React from "react";
+import {
+    participantRoleChanged,
+    getParticipantCount,
+    isLocalParticipantModerator,
+    hostModeratorId,
+} from '../../../base/participants';
+import React from 'react';
 import {
     NativeModules,
     SafeAreaView,
@@ -9,53 +14,40 @@ import {
     View,
     Keyboard,
     TextInput,
-} from "react-native";
-import LinearGradient from "react-native-linear-gradient";
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import type { Dispatch } from 'redux';
+import { appNavigate } from '../../../app';
+import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { Container, LoadingIndicator, TintedView } from '../../../base/react';
+import { connect } from '../../../base/redux';
+import { isNarrowAspectRatio, makeAspectRatioAware } from '../../../base/responsive-ui';
+import { TestConnectionInfo } from '../../../base/testing';
+import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
+import { Chat } from '../../../chat';
 
-import { appNavigate } from "../../../app";
-import { PIP_ENABLED, getFeatureFlag } from "../../../base/flags";
-import { Container, LoadingIndicator, TintedView } from "../../../base/react";
-import { connect } from "../../../base/redux";
-import {
-    isNarrowAspectRatio,
-    makeAspectRatioAware,
-} from "../../../base/responsive-ui";
-import { TestConnectionInfo } from "../../../base/testing";
-import {
-    ConferenceNotification,
-    isCalendarEnabled,
-} from "../../../calendar-sync";
-import { Chat } from "../../../chat";
-
-import { DisplayNameLabel } from "../../../display-name";
-import { SharedDocument } from "../../../etherpad";
-import {
-    FILMSTRIP_SIZE,
-    Filmstrip,
-    isFilmstripVisible,
-    TileView,
-} from "../../../filmstrip";
-import { LargeVideo } from "../../../large-video";
-import { BackButtonRegistry } from "../../../mobile/back-button";
-import { AddPeopleDialog, CalleeInfoContainer } from "../../../invite";
-import { Captions } from "../../../subtitles";
+import { DisplayNameLabel } from '../../../display-name';
+import { SharedDocument } from '../../../etherpad';
+import { FILMSTRIP_SIZE, Filmstrip, isFilmstripVisible, TileView } from '../../../filmstrip';
+import { LargeVideo } from '../../../large-video';
+import { BackButtonRegistry } from '../../../mobile/back-button';
+import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
+import { Captions } from '../../../subtitles';
 import {
     isToolboxVisible,
     isTopNavigationVisible,
     setToolboxVisible,
     Toolbox,
     toggleTopNavigationVisible,
-} from "../../../toolbox";
+} from '../../../toolbox';
 
-import {
-    AbstractConference,
-    abstractMapStateToProps,
-} from "../AbstractConference";
-import Labels from "./Labels";
-import NavigationBar from "./NavigationBar";
-import styles, { NAVBAR_GRADIENT_COLORS } from "./styles";
+import { AbstractConference, abstractMapStateToProps } from '../AbstractConference';
+import Labels from './Labels';
+import NavigationBar from './NavigationBar';
+import Topbar from './Topbar';
+import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
-import type { AbstractProps } from "../AbstractConference";
+import type { AbstractProps } from '../AbstractConference';
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -127,6 +119,21 @@ type Props = AbstractProps & {
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
+    /**
+     * The ID of the  meeting moderator.
+     */
+    _ModeratorId: string,
+    /**
+     * The first participant in the meeting
+     */
+    _firstParticipant: Object,
+    _numberOfParticipants: number,
+    _changeParticipantRole: Function,
+    _isLocalParticipantModerator: boolean,
+    /**
+     * Set the Host ID for this conference
+     */
+    _HostModeratorId: Function,
 };
 
 /**
@@ -157,6 +164,10 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidMount() {
         this._setToolboxVisible(true);
+
+        // this.props._HostModeratorId(this.props._firstParticipant.id);
+        // this.props._ModeratorId = this.props._firstParticipant.id;
+
         BackButtonRegistry.addListener(this._onHardwareBackPress);
     }
 
@@ -182,11 +193,7 @@ class Conference extends AbstractConference<Props, *> {
     render() {
         return (
             <Container style={styles.conference}>
-                <StatusBar
-                    barStyle="light-content"
-                    hidden={true}
-                    translucent={true}
-                />
+                <StatusBar barStyle="light-content" hidden={true} translucent={true} />
 
                 {this._renderContent()}
             </Container>
@@ -225,7 +232,7 @@ class Conference extends AbstractConference<Props, *> {
 
             p = PictureInPicture.enterPictureInPicture();
         } else {
-            p = Promise.reject(new Error("PiP not enabled"));
+            p = Promise.reject(new Error('PiP not enabled'));
         }
 
         p.catch(() => {
@@ -244,9 +251,7 @@ class Conference extends AbstractConference<Props, *> {
     _renderConferenceNotification() {
         const { _calendarEnabled, _reducedUI } = this.props;
 
-        return _calendarEnabled && !_reducedUI ? (
-            <ConferenceNotification />
-        ) : undefined;
+        return _calendarEnabled && !_reducedUI ? <ConferenceNotification /> : undefined;
     }
 
     /**
@@ -266,9 +271,7 @@ class Conference extends AbstractConference<Props, *> {
         } = this.props;
         const showGradient = _toolboxVisible;
         const applyGradientStretching =
-            _filmstripVisible &&
-            isNarrowAspectRatio(this) &&
-            !_shouldDisplayTileView;
+            _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
 
         if (_reducedUI) {
             return this._renderContentForReducedUi();
@@ -310,10 +313,7 @@ class Conference extends AbstractConference<Props, *> {
                     )
                 }
 
-                <SafeAreaView
-                    pointerEvents="box-none"
-                    style={styles.toolboxAndFilmstripContainer}
-                >
+                <SafeAreaView pointerEvents="box-none" style={styles.toolboxAndFilmstripContainer}>
                     {showGradient && (
                         <LinearGradient
                             colors={NAVBAR_GRADIENT_COLORS}
@@ -328,9 +328,7 @@ class Conference extends AbstractConference<Props, *> {
                             }}
                             style={[
                                 styles.bottomGradient,
-                                applyGradientStretching
-                                    ? styles.gradientStretchBottom
-                                    : undefined,
+                                applyGradientStretching ? styles.gradientStretchBottom : undefined,
                             ]}
                         />
                     )}
@@ -340,11 +338,8 @@ class Conference extends AbstractConference<Props, *> {
                     <Captions onPress={this._onClick} />
 
                     {_shouldDisplayTileView || (
-                        <DisplayNameLabel
-                            participantId={_largeVideoParticipantId}
-                        />
+                        <DisplayNameLabel participantId={_largeVideoParticipantId} />
                     )}
-
                     <View
                         style={{
                             ...styles.chatOverlay,
@@ -352,10 +347,16 @@ class Conference extends AbstractConference<Props, *> {
                             // zIndex: 10000,
                         }}
                     >
-                        <Chat />
+                        {/*
+                        The toolbox is being rendered in the Chat component because keyboard
+                        pushing the view up is being manually handled and the chat and toolbox
+                        are the only components that need to move up while the video background remains
+                        fixed.
+                        */}
+                        <Chat isModerator={this.props._isLocalParticipantModerator} />
                         <View
                             style={{
-                                justifyContent: "flex-end",
+                                justifyContent: 'flex-end',
                             }}
                         ></View>
                     </View>
@@ -364,11 +365,8 @@ class Conference extends AbstractConference<Props, *> {
                      */}
                 </SafeAreaView>
 
-                <SafeAreaView
-                    pointerEvents="box-none"
-                    style={{ ...styles.navBarSafeView, marginTop: 0 }}
-                >
-                    <NavigationBar />
+                <SafeAreaView pointerEvents="box-none" style={{ ...styles.navBarSafeView }}>
+                    <Topbar NumberOfParticipants={this.props._numberOfParticipants} />
                     {this._renderNotificationsContainer()}
                 </SafeAreaView>
 
@@ -444,7 +442,21 @@ class Conference extends AbstractConference<Props, *> {
         this.props.dispatch(setToolboxVisible(visible));
     }
 }
-
+/**
+ * Maps actions to props
+ * @param {*} dispatch
+ * @param {*} ownProps
+ */
+function _mapDispatchToProps(dispatch: Dispatch<any>, ownProps: Props) {
+    return {
+        _changeParticipantRole(id, role) {
+            dispatch(participantRoleChanged(id, role));
+        },
+        _HostModeratorId(id) {
+            dispatch(hostModeratorId(id));
+        },
+    };
+}
 /**
  * Maps (parts of) the redux state to the associated {@code Conference}'s props.
  *
@@ -453,9 +465,10 @@ class Conference extends AbstractConference<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { connecting, connection } = state["features/base/connection"];
-    const { conference, joining, leaving } = state["features/base/conference"];
-    const { reducedUI } = state["features/base/responsive-ui"];
+    // console.log(state['features/base/participants']);
+    const { connecting, connection } = state['features/base/connection'];
+    const { conference, joining, leaving } = state['features/base/conference'];
+    const { reducedUI } = state['features/base/responsive-ui'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -466,11 +479,29 @@ function _mapStateToProps(state) {
     // - the XMPP connection is connected and the conference is joining, or
     // - the XMPP connection is connected and we have no conference yet, nor we
     //   are leaving one.
-    const connecting_ =
-        connecting || (connection && (joining || (!conference && !leaving)));
+    const connecting_ = connecting || (connection && (joining || (!conference && !leaving)));
+    // let isLocalParticipantModerator = false;
+    // // console.log(state['features/base/participants']);
+    // // console.log(state['features/base/participants']);
+    // state['features/base/participants'].forEach((participant) => {
+    //     if (participant.local) {
+    //         console.log(participant.name, participant.isHost);
+    //         isLocalParticipantModerator = participant.isHost ? true : false;
+    //     }
+    // });
 
     return {
         ...abstractMapStateToProps(state),
+
+        /**
+         * Is local participant moderator?
+         * If yes, render the host/local participant a different view
+         */
+        _isLocalParticipantModerator: isLocalParticipantModerator,
+        /**
+         * No. of participants in the conference
+         */
+        _numberOfParticipants: getParticipantCount(state),
 
         /**
          * Wherther the calendar feature is enabled or not.
@@ -499,7 +530,7 @@ function _mapStateToProps(state) {
         /**
          * The ID of the participant currently on stage.
          */
-        _largeVideoParticipantId: state["features/large-video"].participantId,
+        _largeVideoParticipantId: state['features/large-video'].participantId,
 
         /**
          * Whether Picture-in-Picture is enabled.
@@ -529,4 +560,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(makeAspectRatioAware(Conference));
+export default connect(_mapStateToProps, _mapDispatchToProps)(makeAspectRatioAware(Conference));

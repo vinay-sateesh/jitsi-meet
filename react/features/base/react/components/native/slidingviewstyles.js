@@ -1,8 +1,8 @@
 // @flow
 
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
-import { OVERLAY_Z_INDEX } from "../../constants";
+import { OVERLAY_Z_INDEX } from '../../constants';
 
 export default {
     /**
@@ -17,7 +17,7 @@ export default {
      * The container of the actual content of the side menu.
      */
     sliderViewContent: {
-        position: "absolute",
+        position: 'absolute',
     },
 
     /**
@@ -26,6 +26,6 @@ export default {
      */
     sliderViewShadow: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
 };

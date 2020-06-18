@@ -23,18 +23,18 @@ window.APP = {
     // finish the connect process when the attach data or error is received.
     connect: {
         handler: null,
-        status: 'initialized'
+        status: 'initialized',
     },
 
     // Used for automated performance tests.
     connectionTimes: {
-        'index.loaded': window.indexLoadedTime
+        'index.loaded': window.indexLoadedTime,
     },
 
     keyboardshortcut,
     remoteControl,
     translation,
-    UI
+    UI,
 };
 
 // TODO The execution of the mobile app starts from react/index.native.js.

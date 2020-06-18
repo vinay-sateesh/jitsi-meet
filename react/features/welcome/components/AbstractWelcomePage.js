@@ -13,7 +13,6 @@ import { isRoomValid } from '../../base/conference';
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
 type Props = {
-
     /**
      * Whether the calendar functionality is enabled or not.
      */
@@ -32,7 +31,7 @@ type Props = {
     /**
      * The Redux dispatch Function.
      */
-    dispatch: Dispatch<any>
+    dispatch: Dispatch<any>,
 };
 
 /**
@@ -50,7 +49,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      */
     static getDerivedStateFromProps(props: Props, state: Object) {
         return {
-            room: props._room || state.room
+            room: props._room || state.room,
         };
     }
 
@@ -73,7 +72,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
         joining: false,
         room: '',
         roomPlaceholder: '',
-        updateTimeoutId: undefined
+        updateTimeoutId: undefined,
     };
 
     /**
@@ -86,8 +85,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._animateRoomnameChanging
-            = this._animateRoomnameChanging.bind(this);
+        this._animateRoomnameChanging = this._animateRoomnameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
         this._updateRoomname = this._updateRoomname.bind(this);
@@ -129,17 +127,13 @@ export class AbstractWelcomePage extends Component<Props, *> {
         const roomPlaceholder = this.state.roomPlaceholder + word.substr(0, 1);
 
         if (word.length > 1) {
-            animateTimeoutId
-                = setTimeout(
-                    () => {
-                        this._animateRoomnameChanging(
-                            word.substring(1, word.length));
-                    },
-                    70);
+            animateTimeoutId = setTimeout(() => {
+                this._animateRoomnameChanging(word.substring(1, word.length));
+            }, 70);
         }
         this.setState({
             animateTimeoutId,
-            roomPlaceholder
+            roomPlaceholder,
         });
     }
 
@@ -177,23 +171,25 @@ export class AbstractWelcomePage extends Component<Props, *> {
      */
     _onJoin() {
         const room = this.state.room || this.state.generatedRoomname;
+        /**Make it video chat always on for moderators
+         * FIXME- theres probably a better way to do this
+         */
 
         sendAnalytics(
             createWelcomePageEvent('clicked', 'joinButton', {
                 isGenerated: !this.state.room,
-                room
-            }));
+                room,
+            })
+        );
 
         if (room) {
             this.setState({ joining: true });
 
             // By the time the Promise of appNavigate settles, this component
             // may have already been unmounted.
-            const onAppNavigateSettled
-                = () => this._mounted && this.setState({ joining: false });
+            const onAppNavigateSettled = () => this._mounted && this.setState({ joining: false });
 
-            this.props.dispatch(appNavigate(room))
-                .then(onAppNavigateSettled, onAppNavigateSettled);
+            this.props.dispatch(appNavigate(room)).then(onAppNavigateSettled, onAppNavigateSettled);
         }
     }
 
@@ -230,9 +226,10 @@ export class AbstractWelcomePage extends Component<Props, *> {
             {
                 generatedRoomname,
                 roomPlaceholder,
-                updateTimeoutId
+                updateTimeoutId,
             },
-            () => this._animateRoomnameChanging(generatedRoomname));
+            () => this._animateRoomnameChanging(generatedRoomname)
+        );
     }
 }
 
@@ -252,6 +249,6 @@ export function _mapStateToProps(state: Object) {
     return {
         _calendarEnabled: isCalendarEnabled(state),
         _room: state['features/base/conference'].room,
-        _settings: state['features/base/settings']
+        _settings: state['features/base/settings'],
     };
 }

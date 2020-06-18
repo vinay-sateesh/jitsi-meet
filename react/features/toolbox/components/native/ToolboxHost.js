@@ -1,7 +1,5 @@
 // @flow
-import { AUDIO_MUTE, createToolbarEvent, sendAnalytics, VIDEO_MUTE } from '../../../analytics';
-import { setAudioMuted, setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../../../base/media';
-import { setAudioOnly } from '../../../base/audio-only';
+
 import React, { PureComponent } from 'react';
 import {
     View,
@@ -19,7 +17,7 @@ import { connect } from '../../../base/redux';
 import { StyleType, BoxModel } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
 import { InfoDialogButton } from '../../../invite';
-
+import DesktopSharingButton from './DesktopSharingButton';
 import { isToolboxVisible } from '../../functions';
 import type { Dispatch } from 'redux';
 import AudioMuteButton from '../AudioMuteButton';
@@ -28,10 +26,9 @@ import { sendMessage } from '../../../chat/actions';
 import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
 import VideoMuteButton from '../VideoMuteButton';
+import ToggleCameraButton from './ToggleCameraButton';
 import ChatInputBar from '../../../chat/components/native/ChatInputBar';
-import UIEvents from '../../../../../service/UI/UIEvents';
 
-declare var APP: Object;
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
  */
@@ -59,12 +56,15 @@ type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function,
+    dispatch: Dispatch<any>,
+
     keyboardWillShowSub: Function,
     keyboardWillHideSub: Function,
-    _setAudioMuted: Function,
-    _setVideoMuted: Function,
-    _audioOnly: boolean,
+    /**
+     * Checking if its enabled for anyone in the meeting - enable
+     * it for everyone if anyone has it enabled
+     */
+    _desktopSharingEnabled: boolean,
 };
 type State = {
     kHeight: number,
@@ -95,12 +95,6 @@ class Toolbox extends PureComponent<Props, State> {
      */
 
     componentDidMount() {
-        /**
-         * Muted audio and video until the host accepts your call
-         * if you ever call that is
-         */
-        this.props._setAudioMuted(true);
-        this.props._setVideoMuted(true);
         this.keyboardWillShowSub = Keyboard.addListener(
             'keyboardDidShow',
             this.keyboardWillShow.bind(this)
@@ -204,6 +198,7 @@ class Toolbox extends PureComponent<Props, State> {
             hangupButtonStyles,
             toggledButtonStyles,
         } = _styles;
+
         /**
          * Using animated view to manually push up toolbox when keyboard is shown
          *
@@ -218,30 +213,21 @@ class Toolbox extends PureComponent<Props, State> {
                 style={{
                     ...styles.toolbar,
                     paddingBottom: this.keyboardHeight,
+                    justifyContent: 'center',
                 }}
             >
-                {/* {_chatEnabled && (
-                    <ChatButton
-                        styles={buttonStylesBorderless}
-                        toggledStyles={this._getChatButtonToggledStyle(
-                            toggledButtonStyles
-                        )}
-                    />
-                )} */}
-
-                <ChatInputBar
-                    // onFocus={() => this.setKeyboardHeight(true)}
-                    // onBlur={() => this.setKeyboardHeight(false)}
-                    onSend={this.props._onSendMessage}
-                />
-
                 {!_chatEnabled && (
                     <InfoDialogButton styles={buttonStyles} toggledStyles={toggledButtonStyles} />
                 )}
                 <AudioMuteButton styles={buttonStyles} toggledStyles={toggledButtonStyles} />
                 {/* <HangupButton
                     styles = { hangupButtonStyles } /> */}
-                <VideoMuteButton styles={buttonStyles} toggledStyles={toggledButtonStyles} />
+                {/* <VideoMuteButton styles={buttonStyles} toggledStyles={toggledButtonStyles} /> */}
+
+                <ToggleCameraButton styles={buttonStyles} />
+                {this.props._desktopSharingEnabled && (
+                    <DesktopSharingButton styles={buttonStyles} />
+                )}
                 <OverflowMenuButton
                     styles={buttonStylesBorderless}
                     toggledStyles={toggledButtonStyles}
@@ -266,17 +252,26 @@ class Toolbox extends PureComponent<Props, State> {
  */
 function _mapStateToProps(state: Object): Object {
     // console.log(state['features/base/participants'][0].id);
-    const { enabled: audioOnly } = state['features/base/audio-only'];
+
+    let { desktopSharingEnabled } = state['features/base/conference'];
+    if (state['features/base/config'].enableFeaturesBasedOnToken) {
+        // we enable desktop sharing if any participant already have this
+        // feature enabled
+        desktopSharingEnabled =
+            getParticipants(state).find(
+                ({ features = {} }) => String(features['screen-sharing']) === 'true'
+            ) !== undefined;
+    }
 
     return {
-        _audioOnly: Boolean(audioOnly),
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
+        _desktopSharingEnabled: Boolean(desktopSharingEnabled),
     };
 }
 
-function _mapDispatchToProps(dispatch: Dispatch<any>, ownProps: Props) {
+function _mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
         /**
          * Sends a text message.
@@ -288,44 +283,6 @@ function _mapDispatchToProps(dispatch: Dispatch<any>, ownProps: Props) {
          */
         _onSendMessage(text: string) {
             dispatch(sendMessage(text));
-        },
-        /**
-         * Participants will have audio and video muted unless the host accepts a call with them
-         * The below function changes the muted state
-         *
-         * @param {boolean} audioMuted - Whether audio should be muted or not.
-         * @protected
-         * @returns {void}
-         */
-        _setAudioMuted(audioMuted: boolean) {
-            sendAnalytics(createToolbarEvent(AUDIO_MUTE, { enable: audioMuted }));
-            dispatch(setAudioMuted(audioMuted, /* ensureTrack */ true));
-
-            // FIXME: The old conference logic as well as the shared video feature
-            // still rely on this event being emitted.
-            typeof APP === 'undefined' || APP.UI.emitEvent(UIEvents.AUDIO_MUTED, audioMuted, true);
-        },
-        /**
-         * Changes the muted state.
-         *
-         * @override
-         * @param {boolean} videoMuted - Whether video should be muted or not.
-         * @protected
-         * @returns {void}
-         */
-        _setVideoMuted(videoMuted: boolean) {
-            sendAnalytics(createToolbarEvent(VIDEO_MUTE, { enable: videoMuted }));
-            if (ownProps._audioOnly) {
-                dispatch(setAudioOnly(false, /* ensureTrack */ true));
-            }
-
-            dispatch(
-                setVideoMuted(videoMuted, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true)
-            );
-
-            // FIXME: The old conference logic still relies on this event being
-            // emitted.
-            typeof APP === 'undefined' || APP.UI.emitEvent(UIEvents.VIDEO_MUTED, videoMuted, true);
         },
     };
 }

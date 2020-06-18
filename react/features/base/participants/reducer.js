@@ -9,9 +9,11 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    HOST_ID,
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
+import { partition } from 'lodash';
 
 /**
  * Participant object.
@@ -39,7 +41,6 @@ declare var APP: Object;
  * @type {string[]}
  */
 const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
-
     // The following properties identify the participant:
     'conference',
     'id',
@@ -48,7 +49,7 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
     // The following properties can only be modified through property-dedicated
     // actions:
     'dominantSpeaker',
-    'pinned'
+    'pinned',
 ];
 
 /**
@@ -64,40 +65,64 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
  */
 ReducerRegistry.register('features/base/participants', (state = [], action) => {
     switch (action.type) {
-    case SET_LOADABLE_AVATAR_URL:
-    case DOMINANT_SPEAKER_CHANGED:
-    case PARTICIPANT_ID_CHANGED:
-    case PARTICIPANT_UPDATED:
-    case PIN_PARTICIPANT:
-        return state.map(p => _participant(p, action));
+        case SET_LOADABLE_AVATAR_URL:
+        case DOMINANT_SPEAKER_CHANGED:
+        case PARTICIPANT_ID_CHANGED:
+        case PARTICIPANT_UPDATED:
+        case PIN_PARTICIPANT:
+            return state.map((p) => _participant(p, action));
 
-    case PARTICIPANT_JOINED:
-        return [ ...state, _participantJoined(action) ];
+        case PARTICIPANT_JOINED:
+            //Make the first participant as the meeting "host" and everyone else as merely
+            //participants with role as participant - later render different views for both
 
-    case PARTICIPANT_LEFT: {
-        // XXX A remote participant is uniquely identified by their id in a
-        // specific JitsiConference instance. The local participant is uniquely
-        // identified by the very fact that there is only one local participant
-        // (and the fact that the local participant "joins" at the beginning of
-        // the app and "leaves" at the end of the app).
-        const { conference, id } = action.participant;
+            return [...state, _participantJoined(action)];
+        case HOST_ID:
+            return _setHost(state, action);
 
-        return state.filter(p =>
-            !(
-                p.id === id
+        case PARTICIPANT_LEFT: {
+            // XXX A remote participant is uniquely identified by their id in a
+            // specific JitsiConference instance. The local participant is uniquely
+            // identified by the very fact that there is only one local participant
+            // (and the fact that the local participant "joins" at the beginning of
+            // the app and "leaves" at the end of the app).
+            const { conference, id } = action.participant;
 
-                    // XXX Do not allow collisions in the IDs of the local
-                    // participant and a remote participant cause the removal of
-                    // the local participant when the remote participant's
-                    // removal is requested.
-                    && p.conference === conference
-                    && (conference || p.local)));
-    }
+            return state.filter(
+                (p) =>
+                    !(
+                        p.id === id &&
+                        // XXX Do not allow collisions in the IDs of the local
+                        // participant and a remote participant cause the removal of
+                        // the local participant when the remote participant's
+                        // removal is requested.
+                        p.conference === conference &&
+                        (conference || p.local)
+                    )
+            );
+        }
     }
 
     return state;
 });
+// function _setHost(state, joinedParticipant) {
+//     let arr = [...state];
+//     console.log(state);
+//     if (arr.length === 0) {
+//         console.log('Host set!');
+//         var i = arr.length;
+//         while (i--) {
+//             if (arr[i] && arr[i].id === id) {
+//                 arr.splice(i, 1);
+//             }
+//         }
 
+//         return [...arr, { ...joinedParticipant, isHost: true }];
+//     } else {
+//         console.log('Host already set ');
+//         return [...arr, { ...joinedParticipant, isHost: false }];
+//     }
+// }
 /**
  * Reducer function for a single participant.
  *
@@ -112,56 +137,58 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
  */
 function _participant(state: Object = {}, action) {
     switch (action.type) {
-    case DOMINANT_SPEAKER_CHANGED:
-        // Only one dominant speaker is allowed.
-        return (
-            set(state, 'dominantSpeaker', state.id === action.participant.id));
+        case DOMINANT_SPEAKER_CHANGED:
+            // Only one dominant speaker is allowed.
+            return set(state, 'dominantSpeaker', state.id === action.participant.id);
 
-    case PARTICIPANT_ID_CHANGED: {
-        // A participant is identified by an id-conference pair. Only the local
-        // participant is with an undefined conference.
-        const { conference } = action;
+        case PARTICIPANT_ID_CHANGED: {
+            // A participant is identified by an id-conference pair. Only the local
+            // participant is with an undefined conference.
+            const { conference } = action;
 
-        if (state.id === action.oldValue
-                && state.conference === conference
-                && (conference || state.local)) {
-            return {
-                ...state,
-                id: action.newValue
-            };
-        }
-        break;
-    }
-
-    case SET_LOADABLE_AVATAR_URL:
-    case PARTICIPANT_UPDATED: {
-        const { participant } = action; // eslint-disable-line no-shadow
-        let { id } = participant;
-        const { local } = participant;
-
-        if (!id && local) {
-            id = LOCAL_PARTICIPANT_DEFAULT_ID;
+            if (
+                state.id === action.oldValue &&
+                state.conference === conference &&
+                (conference || state.local)
+            ) {
+                return {
+                    ...state,
+                    id: action.newValue,
+                };
+            }
+            break;
         }
 
-        if (state.id === id) {
-            const newState = { ...state };
+        case SET_LOADABLE_AVATAR_URL:
+        case PARTICIPANT_UPDATED: {
+            const { participant } = action; // eslint-disable-line no-shadow
+            let { id } = participant;
+            const { local } = participant;
 
-            for (const key in participant) {
-                if (participant.hasOwnProperty(key)
-                        && PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE.indexOf(key)
-                            === -1) {
-                    newState[key] = participant[key];
-                }
+            if (!id && local) {
+                id = LOCAL_PARTICIPANT_DEFAULT_ID;
             }
 
-            return newState;
-        }
-        break;
-    }
+            if (state.id === id) {
+                const newState = { ...state };
 
-    case PIN_PARTICIPANT:
-        // Currently, only one pinned participant is allowed.
-        return set(state, 'pinned', state.id === action.participant.id);
+                for (const key in participant) {
+                    if (
+                        participant.hasOwnProperty(key) &&
+                        PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE.indexOf(key) === -1
+                    ) {
+                        newState[key] = participant[key];
+                    }
+                }
+
+                return newState;
+            }
+            break;
+        }
+
+        case PIN_PARTICIPANT:
+            // Currently, only one pinned participant is allowed.
+            return set(state, 'pinned', state.id === action.participant.id);
     }
 
     return state;
@@ -180,6 +207,7 @@ function _participant(state: Object = {}, action) {
  * {@code action}.
  */
 function _participantJoined({ participant }) {
+    console.log('participanJoined');
     const {
         avatarID,
         avatarURL,
@@ -194,8 +222,8 @@ function _participantJoined({ participant }) {
         name,
         pinned,
         presence,
-        role
     } = participant;
+    const role = 'participant';
     let { conference, id } = participant;
 
     if (local) {
@@ -226,6 +254,6 @@ function _participantJoined({ participant }) {
         name,
         pinned: pinned || false,
         presence,
-        role: role || PARTICIPANT_ROLE.NONE
+        role: role || PARTICIPANT_ROLE.NONE,
     };
 }

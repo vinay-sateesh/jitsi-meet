@@ -8,7 +8,7 @@ import {
     hiddenParticipantJoined,
     hiddenParticipantLeft,
     participantJoined,
-    participantLeft
+    participantLeft,
 } from '../participants';
 import { toState } from '../redux';
 import { safeDecodeURIComponent } from '../util';
@@ -18,7 +18,7 @@ import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
     JITSI_CONFERENCE_URL_KEY,
-    VIDEO_QUALITY_LEVELS
+    VIDEO_QUALITY_LEVELS,
 } from './constants';
 import logger from './logger';
 
@@ -31,8 +31,9 @@ import logger from './logger';
  * @returns {Promise}
  */
 export function _addLocalTracksToConference(
-        conference: { addTrack: Function, getLocalTracks: Function },
-        localTracks: Array<Object>) {
+    conference: { addTrack: Function, getLocalTracks: Function },
+    localTracks: Array<Object>
+) {
     const conferenceLocalTracks = conference.getLocalTracks();
     const promises = [];
 
@@ -41,11 +42,10 @@ export function _addLocalTracksToConference(
         // adding one and the same video track multiple times.
         if (conferenceLocalTracks.indexOf(track) === -1) {
             promises.push(
-                conference.addTrack(track).catch(err => {
-                    _reportError(
-                        'Failed to add local track to conference',
-                        err);
-                }));
+                conference.addTrack(track).catch((err) => {
+                    _reportError('Failed to add local track to conference', err);
+                })
+            );
         }
     }
 
@@ -63,24 +63,23 @@ export function _addLocalTracksToConference(
  * @param {JitsiParticipant} user - The user who has just joined.
  * @returns {void}
  */
-export function commonUserJoinedHandling(
-        { dispatch }: Object,
-        conference: Object,
-        user: Object) {
+export function commonUserJoinedHandling({ dispatch }: Object, conference: Object, user: Object) {
     const id = user.getId();
     const displayName = user.getDisplayName();
 
     if (user.isHidden()) {
         dispatch(hiddenParticipantJoined(id, displayName));
     } else {
-        dispatch(participantJoined({
-            botType: user.getBotType(),
-            conference,
-            id,
-            name: displayName,
-            presence: user.getStatus(),
-            role: user.getRole()
-        }));
+        dispatch(
+            participantJoined({
+                botType: user.getBotType(),
+                conference,
+                id,
+                name: displayName,
+                presence: user.getStatus(),
+                role: user.getRole(),
+            })
+        );
     }
 }
 
@@ -95,10 +94,7 @@ export function commonUserJoinedHandling(
  * @param {JitsiParticipant} user - The user who has just left.
  * @returns {void}
  */
-export function commonUserLeftHandling(
-        { dispatch }: Object,
-        conference: Object,
-        user: Object) {
+export function commonUserLeftHandling({ dispatch }: Object, conference: Object, user: Object) {
     const id = user.getId();
 
     if (user.isHidden()) {
@@ -122,8 +118,9 @@ export function commonUserLeftHandling(
  * features/base/conference.
  */
 export function forEachConference(
-        stateful: Function | Object,
-        predicate: (Object, URL) => boolean) {
+    stateful: Function | Object,
+    predicate: (Object, URL) => boolean
+) {
     const state = toState(stateful)['features/base/conference'];
 
     for (const v of Object.values(state)) {
@@ -137,8 +134,7 @@ export function forEachConference(
             // JITSI_CONFERENCE_URL_KEY at the time of this writing. An
             // alternative is necessary then to recognize JitsiConference
             // instances and myUserId is as good as any other property.
-            if ((url || typeof v.myUserId === 'function')
-                    && !predicate(v, url)) {
+            if ((url || typeof v.myUserId === 'function') && !predicate(v, url)) {
                 return false;
             }
         }
@@ -160,11 +156,13 @@ export function getConferenceName(stateful: Function | Object): string {
     const { callDisplayName } = state['features/base/config'];
     const { pendingSubjectChange, room, subject } = state['features/base/conference'];
 
-    return pendingSubjectChange
-        || subject
-        || callDisplayName
-        || (callee && callee.name)
-        || _.startCase(safeDecodeURIComponent(room));
+    return (
+        pendingSubjectChange ||
+        subject ||
+        callDisplayName ||
+        (callee && callee.name) ||
+        _.startCase(safeDecodeURIComponent(room))
+    );
 }
 
 /**
@@ -178,13 +176,9 @@ export function getConferenceName(stateful: Function | Object): string {
  * @returns {JitsiConference|undefined}
  */
 export function getCurrentConference(stateful: Function | Object) {
-    const { conference, joining, leaving }
-        = toState(stateful)['features/base/conference'];
+    const { conference, joining, leaving } = toState(stateful)['features/base/conference'];
 
-    return (
-        conference
-            ? conference === leaving ? undefined : conference
-            : joining);
+    return conference ? (conference === leaving ? undefined : conference) : joining;
 }
 
 /**
@@ -200,7 +194,7 @@ export function getNearestReceiverVideoQualityLevel(availableHeight: number) {
     const qualityLevels = [
         VIDEO_QUALITY_LEVELS.HIGH,
         VIDEO_QUALITY_LEVELS.STANDARD,
-        VIDEO_QUALITY_LEVELS.LOW
+        VIDEO_QUALITY_LEVELS.LOW,
     ];
 
     let selectedLevel = qualityLevels[0];
@@ -260,21 +254,21 @@ export function isRoomValid(room: ?string) {
  * @returns {Promise}
  */
 export function _removeLocalTracksFromConference(
-        conference: { removeTrack: Function },
-        localTracks: Array<Object>) {
-    return Promise.all(localTracks.map(track =>
-        conference.removeTrack(track)
-            .catch(err => {
+    conference: { removeTrack: Function },
+    localTracks: Array<Object>
+) {
+    return Promise.all(
+        localTracks.map((track) =>
+            conference.removeTrack(track).catch((err) => {
                 // Local track might be already disposed by direct
                 // JitsiTrack#dispose() call. So we should ignore this error
                 // here.
                 if (err.name !== JitsiTrackErrors.TRACK_IS_DISPOSED) {
-                    _reportError(
-                        'Failed to remove local track from conference',
-                        err);
+                    _reportError('Failed to remove local track from conference', err);
                 }
             })
-    ));
+        )
+    );
 }
 
 /**
@@ -306,28 +300,27 @@ function _reportError(msg, err) {
  * @returns {void}
  */
 export function sendLocalParticipant(
-        stateful: Function | Object,
-        conference: {
-            sendCommand: Function,
-            setDisplayName: Function,
-            setLocalParticipantProperty: Function }) {
-    const {
-        avatarID,
-        avatarURL,
-        email,
-        features,
-        name
-    } = getLocalParticipant(stateful);
+    stateful: Function | Object,
+    conference: {
+        sendCommand: Function,
+        setDisplayName: Function,
+        setLocalParticipantProperty: Function,
+    }
+) {
+    const { avatarID, avatarURL, email, features, name } = getLocalParticipant(stateful);
 
-    avatarID && conference.sendCommand(AVATAR_ID_COMMAND, {
-        value: avatarID
-    });
-    avatarURL && conference.sendCommand(AVATAR_URL_COMMAND, {
-        value: avatarURL
-    });
-    email && conference.sendCommand(EMAIL_COMMAND, {
-        value: email
-    });
+    avatarID &&
+        conference.sendCommand(AVATAR_ID_COMMAND, {
+            value: avatarID,
+        });
+    avatarURL &&
+        conference.sendCommand(AVATAR_URL_COMMAND, {
+            value: avatarURL,
+        });
+    email &&
+        conference.sendCommand(EMAIL_COMMAND, {
+            value: email,
+        });
 
     if (features && features['screen-sharing'] === 'true') {
         conference.setLocalParticipantProperty('features_screen-sharing', true);

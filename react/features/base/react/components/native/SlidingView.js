@@ -1,19 +1,20 @@
 // @flow
 
-import React, { PureComponent, type Node } from "react";
+import React, { PureComponent, type Node } from 'react';
 import {
     Animated,
     Dimensions,
     TouchableWithoutFeedback,
     View,
     Keyboard,
-} from "react-native";
+    TouchableHighlightBase,
+} from 'react-native';
 
-import { BackButtonRegistry } from "../../../../mobile/back-button";
+import { BackButtonRegistry } from '../../../../mobile/back-button';
 
-import { type StyleType } from "../../../styles";
+import { type StyleType } from '../../../styles';
 
-import styles from "./slidingviewstyles";
+import styles from './slidingviewstyles';
 
 /**
  * The type of the React {@code Component} props of {@link SlidingView}.
@@ -87,6 +88,7 @@ export default class SlidingView extends PureComponent<Props, State> {
      * @inheritdoc
      */
     static getDerivedStateFromProps(props: Props, prevState: State) {
+        // if (props.show === prevState.showOverlay) console.log('No changes to SlidingView');
         return {
             showOverlay: props.show || prevState.showOverlay,
         };
@@ -100,12 +102,12 @@ export default class SlidingView extends PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        const { height, width } = Dimensions.get("window");
+        const { height, width } = Dimensions.get('window');
         const { position } = props;
 
         let positionOffset = height;
 
-        if (position === "left" || position === "right") {
+        if (position === 'left' || position === 'right') {
             positionOffset = width;
         }
 
@@ -163,25 +165,20 @@ export default class SlidingView extends PureComponent<Props, State> {
      */
     render() {
         const { showOverlay } = this.state;
-
+        // console.log('showOverlay', showOverlay);
         if (!showOverlay) {
             return null;
         }
         const isTransparent = this.props.transparent
-            ? { backgroundColor: "transparent" }
-            : "";
+            ? { backgroundColor: 'transparent' }
+            : { backgroundColor: 'rgba(0,0,0,0.5)' };
         // console.log(isTransparent);
         return (
             <View pointerEvents="box-none" style={styles.sliderViewContainer}>
                 <TouchableWithoutFeedback onPress={this._onHide}>
-                    <View
-                        style={{ ...styles.sliderViewShadow, ...isTransparent }}
-                    />
+                    <View style={{ ...styles.sliderViewShadow, ...isTransparent }} />
                 </TouchableWithoutFeedback>
-                <Animated.View
-                    pointerEvents="box-none"
-                    style={this._getContentStyle()}
-                >
+                <Animated.View pointerEvents="box-none" style={this._getContentStyle()}>
                     {this.props.children}
                 </Animated.View>
             </View>
@@ -204,7 +201,7 @@ export default class SlidingView extends PureComponent<Props, State> {
         const { positionOffset } = this.state;
 
         switch (this.props.position) {
-            case "bottom":
+            case 'bottom':
                 Object.assign(
                     style,
                     {
@@ -218,7 +215,7 @@ export default class SlidingView extends PureComponent<Props, State> {
                     }
                 );
                 break;
-            case "left":
+            case 'left':
                 Object.assign(
                     style,
                     {
@@ -247,7 +244,7 @@ export default class SlidingView extends PureComponent<Props, State> {
     _onHardwareBackPress() {
         const { onHide } = this.props;
 
-        if (typeof onHide === "function") {
+        if (typeof onHide === 'function') {
             return onHide();
         }
 
@@ -293,7 +290,7 @@ export default class SlidingView extends PureComponent<Props, State> {
             const { position } = this.props;
             let toValue = positionOffset;
 
-            if (position === "bottom" || position === "right") {
+            if (position === 'bottom' || position === 'right') {
                 toValue = -positionOffset;
             }
 
@@ -309,6 +306,7 @@ export default class SlidingView extends PureComponent<Props, State> {
                     this._mounted &&
                     !show &&
                     this.setState({ showOverlay: false }, () => {
+                        // console.log('inhere', this.state.showOverlay);
                         this.forceUpdate();
                     });
                 resolve();

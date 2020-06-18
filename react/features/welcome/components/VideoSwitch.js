@@ -15,7 +15,6 @@ import styles, { SWITCH_THUMB_COLOR, SWITCH_UNDER_COLOR } from './styles';
  * The type of the React {@code Component} props of {@link VideoSwitch}.
  */
 type Props = {
-
     /**
      * The redux {@code dispatch} function.
      */
@@ -34,7 +33,7 @@ type Props = {
     /**
      * The current settings from redux.
      */
-    _settings: Object
+    _settings: Object,
 };
 
 /**
@@ -54,7 +53,11 @@ class VideoSwitch extends Component<Props> {
         this._onStartAudioOnlyFalse = this._onStartAudioOnlyChangeFn(false);
         this._onStartAudioOnlyTrue = this._onStartAudioOnlyChangeFn(true);
     }
-
+    componentDidMount = () => {
+        //FIXME - made 'video on' by default but only livestreaming meeting hosts
+        // should have it 'on' all the time
+        this.props.dispatch(updateSettings({ startAudioOnly: false }));
+    };
     /**
      * Implements React's {@link Component#render}.
      *
@@ -64,26 +67,25 @@ class VideoSwitch extends Component<Props> {
         const { t, _headerStyles, _settings } = this.props;
 
         return (
-            <View style = { styles.audioVideoSwitchContainer }>
-                <TouchableWithoutFeedback
-                    onPress = { this._onStartAudioOnlyFalse }>
-                    <View style = { styles.switchLabel }>
-                        <Text style = { _headerStyles.headerText }>
-                            { t('welcomepage.audioVideoSwitch.video') }
+            <View style={styles.audioVideoSwitchContainer}>
+                <TouchableWithoutFeedback onPress={this._onStartAudioOnlyFalse}>
+                    <View style={styles.switchLabel}>
+                        <Text style={_headerStyles.headerText}>
+                            {t('welcomepage.audioVideoSwitch.video')}
                         </Text>
                     </View>
                 </TouchableWithoutFeedback>
                 <Switch
-                    onValueChange = { this._onStartAudioOnlyChange }
-                    style = { styles.audioVideoSwitch }
-                    thumbColor = { SWITCH_THUMB_COLOR }
-                    trackColor = {{ true: SWITCH_UNDER_COLOR }}
-                    value = { _settings.startAudioOnly } />
-                <TouchableWithoutFeedback
-                    onPress = { this._onStartAudioOnlyTrue }>
-                    <View style = { styles.switchLabel }>
-                        <Text style = { _headerStyles.headerText }>
-                            { t('welcomepage.audioVideoSwitch.audio') }
+                    onValueChange={this._onStartAudioOnlyChange}
+                    style={styles.audioVideoSwitch}
+                    thumbColor={SWITCH_THUMB_COLOR}
+                    trackColor={{ true: SWITCH_UNDER_COLOR }}
+                    value={_settings.startAudioOnly}
+                />
+                <TouchableWithoutFeedback onPress={this._onStartAudioOnlyTrue}>
+                    <View style={styles.switchLabel}>
+                        <Text style={_headerStyles.headerText}>
+                            {t('welcomepage.audioVideoSwitch.audio')}
                         </Text>
                     </View>
                 </TouchableWithoutFeedback>
@@ -91,7 +93,7 @@ class VideoSwitch extends Component<Props> {
         );
     }
 
-    _onStartAudioOnlyChange: boolean => void;
+    _onStartAudioOnlyChange: (boolean) => void;
 
     /**
      * Handles the audio-video switch changes.
@@ -103,9 +105,11 @@ class VideoSwitch extends Component<Props> {
     _onStartAudioOnlyChange(startAudioOnly) {
         const { dispatch } = this.props;
 
-        dispatch(updateSettings({
-            startAudioOnly
-        }));
+        dispatch(
+            updateSettings({
+                startAudioOnly,
+            })
+        );
     }
 
     /**
@@ -138,7 +142,7 @@ class VideoSwitch extends Component<Props> {
 export function _mapStateToProps(state: Object) {
     return {
         _headerStyles: ColorSchemeRegistry.get(state, 'Header'),
-        _settings: state['features/base/settings']
+        _settings: state['features/base/settings'],
     };
 }
 

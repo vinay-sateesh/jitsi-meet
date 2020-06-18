@@ -16,7 +16,7 @@
         android:name=".MainActivity"
         android:resizeableActivity="true"
         android:supportsPictureInPicture="true"
-        android:windowSoftInputMode=" adjustPan"
+        android:windowSoftInputMode=" adjustResize"
         >
       <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
       <intent-filter>

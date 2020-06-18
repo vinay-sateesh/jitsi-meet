@@ -37,7 +37,7 @@ const DEFAULT_STATE = {
     userSelectedMicDeviceId: undefined,
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
-    userSelectedMicDeviceLabel: undefined
+    userSelectedMicDeviceLabel: undefined,
 };
 
 const STORE_NAME = 'features/base/settings';
@@ -48,7 +48,7 @@ const STORE_NAME = 'features/base/settings';
 const filterSubtree = {};
 
 // start with the default state
-Object.keys(DEFAULT_STATE).forEach(key => {
+Object.keys(DEFAULT_STATE).forEach((key) => {
     filterSubtree[key] = true;
 });
 
@@ -62,14 +62,14 @@ PersistenceRegistry.register(STORE_NAME, filterSubtree);
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-    case APP_WILL_MOUNT:
-        return _initSettings(state);
+        case APP_WILL_MOUNT:
+            return _initSettings(state);
 
-    case SETTINGS_UPDATED:
-        return {
-            ...state,
-            ...action.settings
-        };
+        case SETTINGS_UPDATED:
+            return {
+                ...state,
+                ...action.settings,
+            };
     }
 
     return state;
@@ -86,8 +86,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
  * @returns {Object}
  */
 function _getLegacyProfile() {
-    let persistedProfile
-        = window.localStorage.getItem('features/base/profile');
+    let persistedProfile = window.localStorage.getItem('features/base/profile');
 
     if (persistedProfile) {
         try {
@@ -132,8 +131,7 @@ function _initSettings(featureState) {
     // is a defined value, it will override any value found in local storage.
     // The workaround is sidestepping _.escape when the value is not set in
     // local storage.
-    const displayName
-        = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
+    const displayName = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
     const email = savedEmail === null ? undefined : _.escape(savedEmail);
 
     if (!avatarID) {
@@ -141,31 +139,34 @@ function _initSettings(featureState) {
         avatarID = randomHexString(32);
     }
 
-    settings = assignIfDefined({
-        avatarID,
-        displayName,
-        email
-    }, settings);
+    settings = assignIfDefined(
+        {
+            avatarID,
+            displayName,
+            email,
+        },
+        settings
+    );
 
     if (!browser.isReactNative()) {
         // Browser only
-        const localFlipX
-            = JSON.parse(window.localStorage.getItem('localFlipX') || 'true');
-        const cameraDeviceId
-            = window.localStorage.getItem('cameraDeviceId') || '';
+        const localFlipX = JSON.parse(window.localStorage.getItem('localFlipX') || 'true');
+        const cameraDeviceId = window.localStorage.getItem('cameraDeviceId') || '';
         const micDeviceId = window.localStorage.getItem('micDeviceId') || '';
 
         // Currently audio output device change is supported only in Chrome and
         // default output always has 'default' device ID
-        const audioOutputDeviceId
-            = window.localStorage.getItem('audioOutputDeviceId') || 'default';
+        const audioOutputDeviceId = window.localStorage.getItem('audioOutputDeviceId') || 'default';
 
-        settings = assignIfDefined({
-            audioOutputDeviceId,
-            cameraDeviceId,
-            localFlipX,
-            micDeviceId
-        }, settings);
+        settings = assignIfDefined(
+            {
+                audioOutputDeviceId,
+                cameraDeviceId,
+                localFlipX,
+                micDeviceId,
+            },
+            settings
+        );
     }
 
     // Things we stored in profile earlier

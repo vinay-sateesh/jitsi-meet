@@ -1,6 +1,6 @@
 // @flow
 
-import React from "react";
+import React from 'react';
 import {
     KeyboardAvoidingView,
     SafeAreaView,
@@ -8,33 +8,38 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     ScrollView,
-} from "react-native";
-import { shouldDisplayTileView } from "../../../video-layout";
-import { Filmstrip } from "../../../filmstrip";
-import { ColorSchemeRegistry } from "../../../base/color-scheme";
-import { translate } from "../../../base/i18n";
-import { HeaderWithNavigation, SlidingView } from "../../../base/react";
-import { connect } from "../../../base/redux";
-import { StyleType } from "../../../base/styles";
-import LinearGradient from "react-native-linear-gradient";
+} from 'react-native';
+import { shouldDisplayTileView } from '../../../video-layout';
+import { Filmstrip } from '../../../filmstrip';
+import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import { translate } from '../../../base/i18n';
+import { HeaderWithNavigation, SlidingView } from '../../../base/react';
+import { connect } from '../../../base/redux';
+import { StyleType } from '../../../base/styles';
+import LinearGradient from 'react-native-linear-gradient';
 
 import AbstractChat, {
     _mapDispatchToProps,
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps,
-} from "../AbstractChat";
+} from '../AbstractChat';
 
-import ChatInputBar from "./ChatInputBar";
-import MessageContainer from "./MessageContainer";
-import MessageRecipient from "./MessageRecipient";
-import styles from "./styles";
-import { Toolbox } from "../../../toolbox";
+import ChatInputBar from './ChatInputBar';
+import MessageContainer from './MessageContainer';
+import MessageRecipient from './MessageRecipient';
+import styles from './styles';
+import { Toolbox, selectToolbox } from '../../../toolbox';
 
 type Props = AbstractProps & {
     /**
      * The color-schemed stylesheet of the feature.
      */
     _styles: StyleType,
+    /**
+     * Renders different toolbar based on user role
+     * @type {Boolean}
+     */
+    isModerator: boolean,
 };
 
 /**
@@ -47,11 +52,11 @@ class Chat extends AbstractChat<Props> {
     };
     componentDidMount() {
         this._keyboardDidShowListener = Keyboard.addListener(
-            Platform.OS === "android" ? "keyboardDidShow" : "keyboardWillShow",
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow',
             this.keyboardDidShow.bind(this)
         );
         this._keyboardDidHideListener = Keyboard.addListener(
-            Platform.OS === "android" ? "keyboardDidHide" : "keyboardWillHide",
+            Platform.OS === 'android' ? 'keyboardDidHide' : 'keyboardWillHide',
             this.keyboardDidHide.bind(this)
         );
     }
@@ -91,13 +96,7 @@ class Chat extends AbstractChat<Props> {
         // this.props._AlwaysOpenChat();
         const flexProp = this.state.keyboardUp ? { flex: 0 } : { flex: 1.3 };
         return (
-            <SlidingView
-                onHide={this._onClose}
-                position="bottom"
-                show={true}
-                transparent
-                dontHide
-            >
+            <SlidingView onHide={this._onClose} position="bottom" show={true} transparent dontHide>
                 <View
                     // behavior="padding"
 
@@ -113,15 +112,15 @@ class Chat extends AbstractChat<Props> {
                         style={{
                             ..._styles.backdrop,
                             flex: 1,
-                            flexDirection: "row",
-                            alignItems: "flex-end",
+                            flexDirection: 'row',
+                            alignItems: 'flex-end',
                             // ...flexProp,
                         }}
                     >
                         <View
                             style={{
                                 flex: 1,
-                                height: "50%",
+                                height: '50%',
                             }}
                         >
                             <MessageContainer messages={this.props._messages} />
@@ -129,7 +128,7 @@ class Chat extends AbstractChat<Props> {
                             <MessageRecipient />
                         </View>
                         {/* <ChatInputBar onSend={this.props._onSendMessage} /> */}
-                        <View style={{ justifyContent: "flex-end" }}>
+                        <View style={{ justifyContent: 'flex-end' }}>
                             {
                                 /*
                                  * The Filmstrip is in a stacking layer above the
@@ -139,15 +138,13 @@ class Chat extends AbstractChat<Props> {
                                  * React Components depict the videos of the conference's
                                  * participants.
                                  */
-                                this.props
-                                    ._shouldDisplayTileView ? undefined : (
-                                    <Filmstrip />
-                                )
+                                this.props._shouldDisplayTileView ? undefined : <Filmstrip />
                             }
                         </View>
                     </SafeAreaView>
                 </View>
-                <Toolbox />
+                {/* {selectToolbox(this.props.isModerator)} */}
+                {selectToolbox(true)}
             </SlidingView>
         );
     }
@@ -180,7 +177,7 @@ class Chat extends AbstractChat<Props> {
 function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
-        _styles: ColorSchemeRegistry.get(state, "Chat"),
+        _styles: ColorSchemeRegistry.get(state, 'Chat'),
         _shouldDisplayTileView: shouldDisplayTileView(state),
     };
 }
