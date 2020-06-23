@@ -85,7 +85,11 @@ export type Props = {
     /**
      * The unique identifier for the notification.
      */
-    uid: number
+    uid: number,
+    /**
+     * render one more button on mobile to perform a custom action
+     */
+    acceptButton: boolean,
 };
 
 /**

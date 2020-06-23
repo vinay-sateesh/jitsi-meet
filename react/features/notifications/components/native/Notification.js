@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconClose } from '../../../base/icons';
+import { Icon, IconClose, IconAddPeople } from '../../../base/icons';
 
 import AbstractNotification, {
     type Props
@@ -26,28 +26,37 @@ class Notification extends AbstractNotification<Props> {
      */
     render() {
         const {
-            isDismissAllowed
+            isDismissAllowed,
+            acceptButton
         } = this.props;
 
         return (
             <View
-                pointerEvents = 'box-none'
-                style = { styles.notification }>
-                <View style = { styles.contentColumn }>
+                pointerEvents='box-none'
+                style={styles.notification}>
+                <View style={styles.contentColumn}>
                     <View
-                        pointerEvents = 'box-none'
-                        style = { styles.notificationContent }>
+                        pointerEvents='box-none'
+                        style={styles.notificationContent}>
                         {
                             this._renderContent()
                         }
                     </View>
                 </View>
                 {
-                    isDismissAllowed
-                    && <TouchableOpacity onPress = { this._onDismissed }>
+                    acceptButton
+                    && <TouchableOpacity onPress={this.props.customActionHandler}>
                         <Icon
-                            src = { IconClose }
-                            style = { styles.dismissIcon } />
+                            src={IconAddPeople}
+                            style={styles.dismissIcon} />
+                    </TouchableOpacity>
+                }
+                {
+                    isDismissAllowed
+                    && <TouchableOpacity onPress={this._onDismissed}>
+                        <Icon
+                            src={IconClose}
+                            style={styles.dismissIcon} />
                     </TouchableOpacity>
                 }
             </View>
@@ -69,19 +78,19 @@ class Notification extends AbstractNotification<Props> {
         if (description && description.length) {
             return description.map((line, index) => (
                 <Text
-                    key = { index }
-                    numberOfLines = { 1 }
-                    style = { styles.contentText }>
-                    { line }
+                    key={index}
+                    numberOfLines={1}
+                    style={styles.contentText}>
+                    {line}
                 </Text>
             ));
         }
 
         return (
             <Text
-                numberOfLines = { 1 }
-                style = { styles.contentText } >
-                { titleText }
+                numberOfLines={1}
+                style={styles.contentText} >
+                {titleText}
             </Text>
         );
     }

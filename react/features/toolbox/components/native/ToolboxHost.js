@@ -28,6 +28,7 @@ import styles from './styles';
 import VideoMuteButton from '../VideoMuteButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import ChatInputBar from '../../../chat/components/native/ChatInputBar';
+import CallButton from './CallButton'
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -65,6 +66,8 @@ type Props = {
      * it for everyone if anyone has it enabled
      */
     _desktopSharingEnabled: boolean,
+    roomName: String,
+    localParticipant: Object
 };
 type State = {
     kHeight: number,
@@ -228,6 +231,8 @@ class Toolbox extends PureComponent<Props, State> {
                 {this.props._desktopSharingEnabled && (
                     <DesktopSharingButton styles={buttonStyles} />
                 )}
+
+                <CallButton styles={buttonStyles} roomName={this.props.roomName} localParticipant={this.props.localParticipant} />
                 <OverflowMenuButton
                     styles={buttonStylesBorderless}
                     toggledStyles={toggledButtonStyles}

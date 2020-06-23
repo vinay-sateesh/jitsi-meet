@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import { ScrollView } from "react-native";
-
+import { db } from '../../../base/config/firebase'
 import { Container, Platform } from "../../../base/react";
 import { connect } from "../../../base/redux";
 import {
@@ -40,16 +40,25 @@ type Props = {
      * @private
      */
     _visible: boolean,
-};
 
+};
+type State = {
+    error: any,
+    onCall: Array<any>
+}
 /**
  * Implements a React {@link Component} which represents the filmstrip on
  * mobile/React Native.
  *
  * @extends Component
  */
-class Filmstrip extends Component<Props> {
+class Filmstrip extends Component<Props, State> {
+    state = {
+        error: null,
+        onCall: []
+    }
     /**
+     *
      * Whether the local participant should be rendered separately from the
      * remote participants i.e. outside of their {@link ScrollView}.
      */
@@ -61,6 +70,7 @@ class Filmstrip extends Component<Props> {
      * @inheritdoc
      */
     constructor(props) {
+
         super(props);
 
         // XXX Our current design is to have the local participant separate from
@@ -81,6 +91,15 @@ class Filmstrip extends Component<Props> {
         // do not have much of a choice but to continue rendering LocalThumbnail
         // as any other remote Thumbnail on Android.
         this._separateLocalThumbnail = Platform.OS !== "android";
+    }
+    componentDidMount() {
+        try {
+            db.ref("onCall").on("child_added", snap => {
+                console.log('Added!')
+                this.setState({ onCall: [...this.state.onCall, snap.val().uid] })
+            })
+        }
+        catch (e) { console.log(e) }
     }
 
     /**
@@ -105,7 +124,7 @@ class Filmstrip extends Component<Props> {
                     <LocalThumbnail />
                 )}
                 <ScrollView
-                    // horizontal = { isNarrowAspectRatio_ }
+                    horizontal={isNarrowAspectRatio_}
 
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
@@ -117,9 +136,10 @@ class Filmstrip extends Component<Props> {
                     {this._sort(
                         this.props._participants,
                         isNarrowAspectRatio_
-                    ).map((p) => (
-                        <Thumbnail key={p.id} participant={p} />
-                    ))}
+                    ).map((p) => {
+                        console.log("prtps", p.id, this.state.onCall);
+                        return this.state.onCall.includes(p.id) ? <Thumbnail key={p.id} participant={p} /> : null;
+                    })}
                     {!this._separateLocalThumbnail && isNarrowAspectRatio_ && (
                         <LocalThumbnail />
                     )}

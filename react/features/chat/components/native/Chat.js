@@ -40,6 +40,10 @@ type Props = AbstractProps & {
      * @type {Boolean}
      */
     isModerator: boolean,
+    roomName: String,
+    localParticipant: Object,
+
+    _shouldDisplayTileView: boolean
 };
 
 /**
@@ -144,7 +148,7 @@ class Chat extends AbstractChat<Props> {
                     </SafeAreaView>
                 </View>
                 {/* {selectToolbox(this.props.isModerator)} */}
-                {selectToolbox(true)}
+                {selectToolbox(this.props.roomName, this.props.localParticipant)}
             </SlidingView>
         );
     }

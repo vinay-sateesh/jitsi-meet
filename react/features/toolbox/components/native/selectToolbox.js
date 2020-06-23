@@ -9,14 +9,12 @@ import React from 'react';
  * @param {boolean} isModerator - Checks if participant is meeting host or not
  * @param {boolean} onCall - The toolbox changes for a participant allowed to video/audio call
  */
-const selectToolbox = (isModerator, onCall = false) => {
-    console.log('selectToolbox', isModerator);
-    if (isModerator) {
-        return <ToolboxHost />;
-    } else {
-        if (onCall) {
-            return <ToolboxOnCall />;
-        } else return <Toolbox />;
+const selectToolbox = (roomName, localParticipant) => {
+    switch (localParticipant.role) {
+        case 'moderator':
+        // return <ToolboxHost />
+        default:
+            return <ToolboxHost roomName={roomName} localParticipant={localParticipant} />
     }
 };
 

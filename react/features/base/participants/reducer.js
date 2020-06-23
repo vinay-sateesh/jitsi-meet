@@ -73,7 +73,7 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
             return state.map((p) => _participant(p, action));
 
         case PARTICIPANT_JOINED:
-            //Make the first participant as the meeting "host" and everyone else as merely
+            //TODO - Make the first participant as the meeting "host" and everyone else as merely
             //participants with role as participant - later render different views for both
 
             return [...state, _participantJoined(action)];

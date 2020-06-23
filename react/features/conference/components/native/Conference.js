@@ -5,7 +5,12 @@ import {
     isLocalParticipantModerator,
     hostModeratorId,
 } from '../../../base/participants';
+import { db } from '../../../base/config/firebase'
 import React from 'react';
+
+import { showNotification, hideNotification } from '../../../notifications';
+import { getLocalParticipant, getParticipantById } from '../../../base/participants'
+import { getConferenceName } from '../../../base/conference';
 import {
     NativeModules,
     SafeAreaView,
@@ -14,8 +19,10 @@ import {
     View,
     Keyboard,
     TextInput,
+    Text
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { ConfirmDialog } from '../../../base/dialog';
 import type { Dispatch } from 'redux';
 import { appNavigate } from '../../../app';
 import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
@@ -134,6 +141,8 @@ type Props = AbstractProps & {
      * Set the Host ID for this conference
      */
     _HostModeratorId: Function,
+    _roomName: String,
+    _localParticipant: Object
 };
 
 /**
@@ -148,11 +157,35 @@ class Conference extends AbstractConference<Props, *> {
      */
     constructor(props) {
         super(props);
-
+        this.state = {
+            // user: auth().currentUser,
+            calls: [],
+            onCall: [],
+            readError: null,
+            currentNotificationId: null,
+            localRole: this.props._localParticipant.role
+        };
         // Bind event handlers so they are only bound once per instance.
         this._onClick = this._onClick.bind(this);
         this._onHardwareBackPress = this._onHardwareBackPress.bind(this);
         this._setToolboxVisible = this._setToolboxVisible.bind(this);
+    }
+    async handleOnCall(id) {
+        console.log(id)
+        await db.ref("onCall").push({
+
+            uid: id,
+
+        }, (err) => {
+
+            if (err) {
+                console.log(err);
+            }
+            else {
+                console.log('Call Made!')
+            }
+
+        });
     }
 
     /**
@@ -163,6 +196,53 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentDidMount() {
+        try {
+            db.ref("calls").on("child_added", snap => {
+                console.log(snap)
+                let calls = [];
+
+                calls.push({ ...snap.val(), key: snap.key });
+                this.setState({ calls });
+
+                const customActionHandler = () => {
+                    this.state.onCall.push(snap.val());
+                    this.state.currentNotificationId ?
+                        this.props.dispatch(hideNotification(this.state.currentNotificationId))
+                        : console.log('No notification id set');
+                    console.log(this.state.onCall);
+                    // this.props.dispatch(participantRoleChanged(snap.val().uid, 'onCall'));
+                    this.handleOnCall(snap.val().uid);
+
+                    //Show remote participant view once they are onCall
+
+
+                };
+                /**
+                 * Show someone is calling you only if you are
+                 * the meeting host of a conference that contains
+                 * that participant
+                 */
+                //FIX - need to add : this.props._localParticipant.role === 'moderator' &&
+                if (this.props._roomName === snap.val().roomName) {
+                    //Noitify moderator about call for 15 seconds
+                    const notification = showNotification({
+                        titleKey: `${snap.val().name} is calling you!`,
+                        description: <Text>Incoming call</Text>,
+                        descriptionKey: snap.val().uid,
+                        customActionNameKey: 'Accept Call',
+                        customActionHandler,
+                        acceptButton: true
+
+                    }, 15000);
+                    this.setState({ currentNotificationId: notification.uid });
+                    this.props.dispatch(notification);
+                }
+
+            });
+
+        } catch (error) {
+            this.setState({ readError: error.message });
+        }
         this._setToolboxVisible(true);
 
         // this.props._HostModeratorId(this.props._firstParticipant.id);
@@ -196,6 +276,7 @@ class Conference extends AbstractConference<Props, *> {
                 <StatusBar barStyle="light-content" hidden={true} translucent={true} />
 
                 {this._renderContent()}
+
             </Container>
         );
     }
@@ -279,6 +360,7 @@ class Conference extends AbstractConference<Props, *> {
 
         return (
             <>
+
                 <AddPeopleDialog />
 
                 <SharedDocument />
@@ -290,8 +372,8 @@ class Conference extends AbstractConference<Props, *> {
                     _shouldDisplayTileView ? (
                         <TileView onClick={this._onClick} />
                     ) : (
-                        <LargeVideo onClick={this._onClick} />
-                    )
+                            <LargeVideo onClick={this._onClick} />
+                        )
                 }
 
                 {
@@ -353,7 +435,7 @@ class Conference extends AbstractConference<Props, *> {
                         are the only components that need to move up while the video background remains
                         fixed.
                         */}
-                        <Chat isModerator={this.props._isLocalParticipantModerator} />
+                        <Chat roomName={this.props._roomName} localParticipant={this.props._localParticipant} isModerator={this.props._isLocalParticipantModerator} />
                         <View
                             style={{
                                 justifyContent: 'flex-end',
@@ -363,6 +445,7 @@ class Conference extends AbstractConference<Props, *> {
                     {/*
                      * The Toolbox is in a stacking layer below the Filmstrip.
                      */}
+
                 </SafeAreaView>
 
                 <SafeAreaView pointerEvents="box-none" style={{ ...styles.navBarSafeView }}>
@@ -492,7 +575,9 @@ function _mapStateToProps(state) {
 
     return {
         ...abstractMapStateToProps(state),
+        _roomName: getConferenceName(state),
 
+        _localParticipant: getLocalParticipant(state),
         /**
          * Is local participant moderator?
          * If yes, render the host/local participant a different view
