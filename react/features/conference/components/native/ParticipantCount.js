@@ -38,9 +38,10 @@ class ParticipantCount extends AbstractButton<Props, *> {
                         borderColor: 'white',
                         paddingHorizontal: 4,
                         borderRadius: 8,
+                        marginHorizontal: 4
                     }}
                 >
-                    <Text style={{ fontSize: 18, color: 'white' }}>{this.props.count}</Text>
+                    <Text style={{ fontSize: 18, color: 'white' }}>Viewers: {this.props.count}</Text>
                 </View>
             </TouchableOpacity>
         );

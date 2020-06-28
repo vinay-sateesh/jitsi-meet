@@ -124,7 +124,7 @@ class Chat extends AbstractChat<Props> {
                         <View
                             style={{
                                 flex: 1,
-                                height: '50%',
+                                height: '40%',
                             }}
                         >
                             <MessageContainer messages={this.props._messages} />

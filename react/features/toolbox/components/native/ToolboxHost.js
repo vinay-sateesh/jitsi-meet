@@ -21,7 +21,7 @@ import DesktopSharingButton from './DesktopSharingButton';
 import { isToolboxVisible } from '../../functions';
 import type { Dispatch } from 'redux';
 import AudioMuteButton from '../AudioMuteButton';
-import HangupButton from '../HangupButton';
+import RaiseHandButton from './RaiseHandButton';
 import { sendMessage } from '../../../chat/actions';
 import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
@@ -29,6 +29,7 @@ import VideoMuteButton from '../VideoMuteButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import ChatInputBar from '../../../chat/components/native/ChatInputBar';
 import CallButton from './CallButton'
+import ShareButton from './ShareButton';
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -88,7 +89,7 @@ class Toolbox extends PureComponent<Props, State> {
     keyboardWillHideSub: Function;
     constructor(props: Props) {
         super(props);
-        this.keyboardHeight = new Animated.Value(BoxModel.padding);
+        this.keyboardHeight = new Animated.Value(BoxModel.padding * 1.5);
     }
     /**
      * Implements React's {@link Component#render()}.
@@ -131,7 +132,7 @@ class Toolbox extends PureComponent<Props, State> {
         Animated.parallel([
             Animated.timing(this.keyboardHeight, {
                 duration: event.duration,
-                toValue: BoxModel.padding,
+                toValue: BoxModel.padding * 1.5,
             }),
         ]).start();
     };
@@ -233,6 +234,8 @@ class Toolbox extends PureComponent<Props, State> {
                 )}
 
                 <CallButton styles={buttonStyles} roomName={this.props.roomName} localParticipant={this.props.localParticipant} />
+                <RaiseHandButton styles={{ ...buttonStyles }} />
+                <ShareButton roomName={this.props.roomName} styles={{ ...buttonStyles }} />
                 <OverflowMenuButton
                     styles={buttonStylesBorderless}
                     toggledStyles={toggledButtonStyles}

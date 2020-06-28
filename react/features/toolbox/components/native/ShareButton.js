@@ -1,7 +1,7 @@
 // @flow
 
 import { type Dispatch } from 'redux';
-import { Text } from 'react-native'
+import { Text, Share } from 'react-native'
 import React from 'react'
 import { showNotification } from '../../../notifications'
 import {
@@ -9,7 +9,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconRaisedHand } from '../../../base/icons';
+import { IconRaisedHand, IconReply } from '../../../base/icons';
 import {
     getLocalParticipant,
     participantUpdated
@@ -29,9 +29,9 @@ type Props = AbstractButtonProps & {
     _localParticipant: Object,
 
     /**
-     * Whether the participant raused their hand or not.
+     * Name of room participant is in
      */
-    _raisedHand: boolean,
+    roomName: String,
 
     /**
      * The redux {@code dispatch} function.
@@ -43,9 +43,9 @@ type Props = AbstractButtonProps & {
 /**
  * An implementation of a button to raise or lower hand.
  */
-class RaiseHandButton extends AbstractButton<Props, *> {
+class ShareButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
-    icon = IconRaisedHand;
+    icon = IconReply;
     label = 'toolbar.raiseYourHand';
     toggledLabel = 'toolbar.lowerYourHand';
 
@@ -76,31 +76,28 @@ class RaiseHandButton extends AbstractButton<Props, *> {
      *
      * @returns {void}
      */
-    _toggleRaisedHand() {
-        const enable = !this.props._raisedHand;
-
-        sendAnalytics(createToolbarEvent('raise.hand', { enable }));
-        const notification = showNotification({
-            titleKey: `Yay`,
-            description: <Text>{this.props._localParticipant.name ? this.props._localParticipant.name : 'Random Participant'} wants to buy this!</Text>,
-            // descriptionKey: this.props._localParticipant.id,
+    async _toggleRaisedHand() {
 
 
+        try {
+            const result = await Share.share({
+                message:
+                    `Join the livestream at:\nhttps://apne.app/${this.props.roomName}`,
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
 
-        }, 15000);
 
-        this.props.dispatch(notification);
-        this.props.dispatch(participantUpdated({
-            // XXX Only the local participant is allowed to update without
-            // stating the JitsiConference instance (i.e. participant property
-            // `conference` for a remote participant) because the local
-            // participant is uniquely identified by the very fact that there is
-            // only one local participant.
-
-            id: this.props._localParticipant.id,
-            local: true,
-            raisedHand: enable
-        }));
     }
 }
 
@@ -122,4 +119,4 @@ function _mapStateToProps(state): Object {
     };
 }
 
-export default translate(connect(_mapStateToProps)(RaiseHandButton));
+export default translate(connect(_mapStateToProps)(ShareButton));

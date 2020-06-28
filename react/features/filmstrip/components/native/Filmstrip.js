@@ -124,7 +124,7 @@ class Filmstrip extends Component<Props, State> {
                     <LocalThumbnail />
                 )}
                 <ScrollView
-                    horizontal={isNarrowAspectRatio_}
+                    // horizontal={isNarrowAspectRatio_}
 
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
